@@ -9,7 +9,7 @@ import lombok.Data;
 public class FoodPicture {
 
     private long id;
-    private String food_id;
+    private long food_id;
     private String pic_url;
 
 }

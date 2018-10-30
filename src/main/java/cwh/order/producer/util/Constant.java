@@ -6,4 +6,6 @@ package cwh.order.producer.util;
 public class Constant {
 
     public static final String OK = "ok";
+
+    public static final String FILEPATH = "D:/order_file";
 }
