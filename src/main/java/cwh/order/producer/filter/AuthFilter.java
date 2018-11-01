@@ -1,5 +1,7 @@
 package cwh.order.producer.filter;
 
+import com.alibaba.fastjson.JSON;
+import cwh.order.producer.util.Constant;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -8,8 +10,9 @@ import javax.servlet.*;
 import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by 曹文豪 on 2018/6/15.
@@ -41,8 +44,21 @@ public class AuthFilter implements Filter {
             httpServletRequest.setCharacterEncoding("utf-8");
             httpServletResponse.setCharacterEncoding("utf-8");
             String token = httpServletRequest.getHeader("token");
-
-            filterChain.doFilter(httpServletRequest, httpServletResponse);
+            if (token == null && httpServletRequest.getRequestURI().endsWith("/getToken")) {
+                filterChain.doFilter(httpServletRequest, httpServletResponse);
+                return;
+            }
+            assert token != null;
+            Object o = redisTemplate.opsForValue().get(token);
+            if (o == null) {
+                httpServletResponse.setStatus(200);
+                Map<String, Object> map = new HashMap<>();
+                map.put("status", Constant.CODE_UNLOGIN);
+                httpServletResponse.getWriter().write(JSON.toJSONString(map));
+            } else {
+                httpServletRequest.setAttribute("openid", o);
+                filterChain.doFilter(httpServletRequest, httpServletResponse);
+            }
         }
     }
 

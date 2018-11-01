@@ -12,5 +12,5 @@ import java.util.List;
 public interface FoodDao {
 
     void insert(Food food);
-    List<Food> queryFoodsByUser(long user_id);
+    List<Food> queryFoodsByUser(String openid);
 }

@@ -13,9 +13,9 @@ public class Constant {
 
     public static final String FILEPATH = "D:/order_file";
 
-    public static final String USER_SESSION_NAME = "user_id";
-
     public static final String APPID = "wxbdba0216200dee6a";
 
     public static final String APPSECRET = "67f20433a972c589ace16d6968eff071";
+
+    public static final long TIMEOUT = 30;  //min
 }

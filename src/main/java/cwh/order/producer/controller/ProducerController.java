@@ -3,11 +3,7 @@ package cwh.order.producer.controller;
 import cwh.order.producer.service.FoodService;
 import cwh.order.producer.service.LoginService;
 import cwh.order.producer.util.Constant;
-import cwh.order.producer.util.UserHelperUtil;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -27,15 +23,15 @@ public class ProducerController {
     @Resource
     private LoginService loginService;
 
-    @PostMapping("getToken")
-    public Map<String, Object> getToken(HttpServletRequest request) {
+    @GetMapping("getToken")
+    public Map<String, Object> getToken(@RequestParam("code") String code) {
         Map<String, Object> map = new HashMap<>();
         try {
-            map.put("token", loginService.getToken(request));
-            map.put("code", Constant.CODE_OK);
+            map.put("token", loginService.getToken(code));
+            map.put("status", Constant.CODE_OK);
         } catch (Exception e) {
             e.printStackTrace();
-            map.put("code", Constant.CODE_ERROR);
+            map.put("status", Constant.CODE_ERROR);
             map.put("error_message", e.getMessage());
         }
         return map;
@@ -46,10 +42,10 @@ public class ProducerController {
         Map<String, Object> map = new HashMap<>();
         try {
             foodService.add(request);
-            map.put("code", Constant.CODE_OK);
+            map.put("status", Constant.CODE_OK);
         } catch (Exception e) {
             e.printStackTrace();
-            map.put("code", Constant.CODE_ERROR);
+            map.put("status", Constant.CODE_ERROR);
             map.put("error_message", e.getMessage());
         }
         return map;
@@ -59,13 +55,13 @@ public class ProducerController {
     public Map<String, Object> queryFoods(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
         try {
-            long userId = UserHelperUtil.getUserId(request);
-            List<Map> foods = foodService.queryFoods(userId);
-            map.put("code", Constant.CODE_OK);
+            String openid = request.getAttribute("openid").toString();
+            List<Map> foods = foodService.queryFoodsByUser(openid);
+            map.put("status", Constant.CODE_OK);
             map.put("message", foods);
         } catch (Exception e) {
             e.printStackTrace();
-            map.put("code", Constant.CODE_ERROR);
+            map.put("status", Constant.CODE_ERROR);
             map.put("error_message", e.getMessage());
         }
         return map;

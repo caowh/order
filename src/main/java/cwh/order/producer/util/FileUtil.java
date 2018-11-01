@@ -10,9 +10,9 @@ import java.util.Calendar;
  */
 public class FileUtil {
 
-    public static String save(MultipartFile file, long user_id) throws IOException {
+    public static String save(MultipartFile file, String openid) throws IOException {
         Calendar cal = Calendar.getInstance();
-        String path = user_id + File.separator + cal.get(Calendar.YEAR)
+        String path = openid + File.separator + cal.get(Calendar.YEAR)
                 + File.separator + cal.get(Calendar.MONTH) + File.separator + cal.get(Calendar.DATE);
         String name = file.getOriginalFilename();
         String fileName = System.currentTimeMillis() + name.substring(name.indexOf("."), name.length());

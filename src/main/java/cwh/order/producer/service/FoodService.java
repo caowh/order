@@ -11,5 +11,5 @@ public interface FoodService {
 
     void add(HttpServletRequest request);
 
-    List<Map> queryFoods(long user_id);
+    List<Map> queryFoodsByUser(String openid);
 }
