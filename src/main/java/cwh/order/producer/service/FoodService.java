@@ -1,6 +1,8 @@
 package cwh.order.producer.service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 曹文豪 on 2018/10/30.
@@ -8,4 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 public interface FoodService {
 
     void add(HttpServletRequest request);
+
+    List<Map> queryFoods(long user_id);
 }

@@ -2,9 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cwh.order.producer.dao.FoodDao">
 
-
-    <insert id="insert" parameterType="cwh.order.producer.model.Food">
-      INSERT INTO FOOD VALUES (#{id});
+    <insert id="insert" parameterType="cwh.order.producer.model.Food" useGeneratedKeys="true" keyProperty="id">
+      INSERT INTO FOOD(f_name,description,price,surplusCount,user_id) VALUES (#{f_name},#{description},#{price},#{surplusCount},#{user_id});
     </insert>
 
 </mapper>

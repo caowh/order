@@ -15,5 +15,6 @@ public class Food {
     private String description;
     private BigDecimal price;
     private int surplusCount;
+    private long user_id;
 
 }
