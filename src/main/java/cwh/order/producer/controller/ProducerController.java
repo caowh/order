@@ -96,11 +96,74 @@ public class ProducerController {
         return map;
     }
 
-    @PostMapping("getBindPhone")
+    @GetMapping("getBindPhone")
     public Map<String, Object> getBindPhone(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
         map.put("message", configService.getBindPhone(openid));
+        map.put("status", Constant.CODE_OK);
+        return map;
+    }
+
+    @GetMapping("getStoreName")
+    public Map<String, Object> getStoreName(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        map.put("message", configService.getStoreName(openid));
+        map.put("status", Constant.CODE_OK);
+        return map;
+    }
+
+    @GetMapping("getDescription")
+    public Map<String, Object> getDescription(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        map.put("message", configService.getDescription(openid));
+        map.put("status", Constant.CODE_OK);
+        return map;
+    }
+
+    @GetMapping("getHeadPictureUrl")
+    public Map<String, Object> getHeadPictureUrl(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        map.put("message", configService.getHeadPictureUrl(openid));
+        map.put("status", Constant.CODE_OK);
+        return map;
+    }
+
+    @GetMapping("getRegionAddress")
+    public Map<String, Object> getRegionAddress(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        map.put("message", configService.getRegionAddress(openid));
+        map.put("status", Constant.CODE_OK);
+        return map;
+    }
+
+    @GetMapping("getStorePictureUrls")
+    public Map<String, Object> getStorePictureUrls(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        map.put("message", configService.getStorePictureUrls(openid));
+        map.put("status", Constant.CODE_OK);
+        return map;
+    }
+
+    @GetMapping("getSettingStatus")
+    public Map<String, Object> getSettingStatus(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        map.put("message", configService.getSettingStatus(openid));
+        map.put("status", Constant.CODE_OK);
+        return map;
+    }
+
+    @GetMapping("getStore")
+    public Map<String, Object> getStore(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        map.put("message", configService.getStore(openid));
         map.put("status", Constant.CODE_OK);
         return map;
     }

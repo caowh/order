@@ -27,10 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -182,6 +179,45 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
+    public Map<String, String> getRegionAddress(String openid) {
+        Map<String, String> map = new HashMap<>();
+        SellUser sellUser = sellUserDao.getRegionAddress(openid);
+        String address = "", region = "";
+        if (sellUser != null) {
+            address = sellUser.getAddress();
+            region = sellUser.getRegion();
+        }
+        map.put("address", address);
+        map.put("region", region);
+        return map;
+    }
+
+    @Override
+    public String getHeadPictureUrl(String openid) {
+        String headPicture_url = sellUserDao.getHeadPictureUrl(openid);
+        return headPicture_url == null ? "" : headPicture_url;
+    }
+
+    @Override
+    public String getStoreName(String openid) {
+        String storeName = sellUserDao.getStoreName(openid);
+        return storeName == null ? "" : storeName;
+    }
+
+    @Override
+    public String getDescription(String openid) {
+        String description = sellUserDao.getDescription(openid);
+        return description == null ? "" : description;
+    }
+
+    @Override
+    public List<String> getStorePictureUrls(String openid) {
+        List<String> list = storePictureDao.getStorePictureUrls(openid);
+        return list == null ? new ArrayList<>() : list;
+    }
+
+
+    @Override
     @Transactional(rollbackFor = {HandleException.class})
     public void configStore(Map<String, Object> map) throws HandleException {
         Object name = map.get("name");
@@ -222,8 +258,6 @@ public class ConfigServiceImpl implements ConfigService {
             logger.error("configStore throw IOException,openid is {},error is {}", openid, e.getMessage());
             throw new HandleException("图片保存失败，稍后重试");
         }
-        sellUser.setApproval(0);
-        sellUser.setBusiness(0);
         sellUserDao.updateStore(sellUser);
     }
 
@@ -241,12 +275,49 @@ public class ConfigServiceImpl implements ConfigService {
         return sellUserDao.queryNameCountByRegion(sellUser);
     }
 
+    @Override
+    public Map<String, String> getStore(String openid) {
+        Map<String, String> map = new HashMap<>();
+        SellUser sellUser = sellUserDao.getStore(openid);
+        if (sellUser != null) {
+            String address = sellUser.getAddress() == null ? "" : sellUser.getAddress();
+            map.put("address", address);
+            String region = sellUser.getRegion() == null ? "" : sellUser.getRegion();
+            map.put("region", region);
+            String storeName = sellUser.getStore_name() == null ? "" : sellUser.getStore_name();
+            map.put("storeName", storeName);
+            String headPicture_url = sellUser.getHeadPicture_url() == null ? "" : sellUser.getHeadPicture_url();
+            map.put("headPictureUrl", headPicture_url);
+            String description = sellUser.getDescription() == null ? "" : sellUser.getDescription();
+            map.put("description", description);
+            map.put("storePictureUrls", String.valueOf(storePictureDao.getStorePictureCount(openid)));
+        }
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> getSettingStatus(String openid) {
+        Map<String, Object> map = new HashMap<>();
+        SellUser sellUser = sellUserDao.getStore(openid);
+        Boolean store = false;
+        if (sellUser != null && sellUser.getAddress() != null && sellUser.getRegion() != null && sellUser.getDescription() != null
+                && sellUser.getStore_name() != null && sellUser.getHeadPicture_url() != null) {
+            store = true;
+        }
+        map.put("phone", this.getBindPhone(openid));
+        map.put("store", store);
+        map.put("approval", sellUserDao.getApproval(openid) == 1);
+        return map;
+    }
+
     @Transactional(rollbackFor = {Exception.class})
     private void bindingPhone(String openid, String phoneNumber) {
         String phone = sellUserDao.queryPhone(openid);
         SellUser sellUser = new SellUser();
         sellUser.setOpenid(openid);
         sellUser.setPhone(phoneNumber);
+        sellUser.setBusiness(0);
+        sellUser.setApproval(0);
         if (phone == null) {
             sellUserDao.insert(sellUser);
         } else {
