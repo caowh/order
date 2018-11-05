@@ -1,8 +1,7 @@
 package cwh.order.producer.filter;
 
 import com.alibaba.fastjson.JSON;
-import cwh.order.producer.dao.UserDao;
-import cwh.order.producer.model.SellUser;
+import cwh.order.producer.dao.SellUserDao;
 import cwh.order.producer.util.Constant;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -25,7 +24,7 @@ public class AuthFilter implements Filter {
     @Resource
     private RedisTemplate redisTemplate;
     @Resource
-    private UserDao userDao;
+    private SellUserDao sellUserDao;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -61,8 +60,8 @@ public class AuthFilter implements Filter {
                 map.put("status", Constant.CODE_UNLOGIN);
                 httpServletResponse.getWriter().write(JSON.toJSONString(map));
             } else {
-                SellUser sellUser = userDao.query(o.toString());
-                if (sellUser == null && !(url.endsWith("sendPhoneKey") || url.endsWith("bindPhone") || url.endsWith("getBindPhone"))) {
+                String phone = sellUserDao.queryPhone(o.toString());
+                if (phone == null && !(url.endsWith("sendPhoneKey") || url.endsWith("bindPhone") || url.endsWith("getBindPhone"))) {
                     httpServletResponse.setStatus(200);
                     Map<String, Object> map = new HashMap<>();
                     map.put("status", Constant.NO_PHONE);

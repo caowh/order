@@ -7,11 +7,15 @@ import org.springframework.stereotype.Repository;
  * Created by Administrator on 2018/11/4 0004.
  */
 @Repository
-public interface UserDao {
+public interface SellUserDao {
 
     void insert(SellUser sellUser);
 
-    SellUser query(String openid);
+    String queryPhone(String openid);
 
     void updatePhone(SellUser sellUser);
+
+    void updateStore(SellUser sellUser);
+
+    int queryNameCountByRegion(SellUser sellUser);
 }

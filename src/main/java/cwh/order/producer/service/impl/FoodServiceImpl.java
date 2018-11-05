@@ -54,7 +54,7 @@ public class FoodServiceImpl implements FoodService {
         long food_id = food.getId();
         for (MultipartFile file : files) {
             try {
-                String url = FileUtil.save(file, openid);
+                String url = FileUtil.save(file);
                 FoodPicture foodPicture = new FoodPicture();
                 foodPicture.setFood_id(food_id);
                 foodPicture.setPic_url(url);

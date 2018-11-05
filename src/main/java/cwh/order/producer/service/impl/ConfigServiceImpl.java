@@ -9,10 +9,13 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
-import cwh.order.producer.dao.UserDao;
+import cwh.order.producer.dao.SellUserDao;
+import cwh.order.producer.dao.StorePictureDao;
 import cwh.order.producer.model.SellUser;
-import cwh.order.producer.service.LoginService;
+import cwh.order.producer.model.StorePicture;
+import cwh.order.producer.service.ConfigService;
 import cwh.order.producer.util.Constant;
+import cwh.order.producer.util.FileUtil;
 import cwh.order.producer.util.HandleException;
 import okhttp3.*;
 import org.slf4j.Logger;
@@ -20,9 +23,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -31,14 +37,16 @@ import java.util.concurrent.TimeUnit;
  * Created by 曹文豪 on 2018/11/1.
  */
 @Service
-public class LoginServiceImpl implements LoginService {
+public class ConfigServiceImpl implements ConfigService {
 
     private final OkHttpClient client = new OkHttpClient();
-    private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConfigServiceImpl.class);
     @Resource
     private RedisTemplate<String, String> redisTemplate;
     @Resource
-    private UserDao userDao;
+    private SellUserDao sellUserDao;
+    @Resource
+    private StorePictureDao storePictureDao;
 
     @Override
     public String getToken(String code) throws HandleException {
@@ -169,21 +177,80 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public String getBindPhone(String openid) {
-        SellUser sellUser = userDao.query(openid);
-        return sellUser == null ? "" : sellUser.getPhone();
+        String phone = sellUserDao.queryPhone(openid);
+        return phone == null ? "" : phone;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {HandleException.class})
+    public void configStore(Map<String, Object> map) throws HandleException {
+        Object name = map.get("name");
+        if (name == null) {
+            throw new HandleException("未填写店铺名称");
+        }
+        Object region = map.get("region");
+        if (region == null) {
+            throw new HandleException("未选择地区");
+        }
+        Object address = map.get("address");
+        if (address == null) {
+            throw new HandleException("未填写详细地址");
+        }
+        Object headPicture = map.get("headPicture");
+        if (headPicture == null) {
+            throw new HandleException("未上传头像");
+        }
+        SellUser sellUser = new SellUser();
+        String openid = map.get("openid").toString();
+        sellUser.setOpenid(openid);
+        sellUser.setRegion(region.toString());
+        sellUser.setAddress(address.toString());
+        sellUser.setDescription(map.get("description").toString());
+        sellUser.setStore_name(name.toString());
+        try {
+            sellUser.setHeadPicture_url(FileUtil.save((MultipartFile) headPicture));
+            Object storePictures = map.get("storePictures");
+            if (storePictures != null) {
+                for (MultipartFile file : (List<MultipartFile>) storePictures) {
+                    StorePicture storePicture = new StorePicture();
+                    storePicture.setOpenid(openid);
+                    storePicture.setPic_url(FileUtil.save(file));
+                    storePictureDao.insert(storePicture);
+                }
+            }
+        } catch (IOException e) {
+            logger.error("configStore throw IOException,openid is {},error is {}", openid, e.getMessage());
+            throw new HandleException("图片保存失败，稍后重试");
+        }
+        sellUser.setApproval(0);
+        sellUser.setBusiness(0);
+        sellUserDao.updateStore(sellUser);
+    }
+
+    @Override
+    public int checkStoreNameByRegion(String region, String name) throws HandleException {
+        if (name == null) {
+            throw new HandleException("未填写店铺名称");
+        }
+        if (region == null) {
+            throw new HandleException("未选择地区");
+        }
+        SellUser sellUser = new SellUser();
+        sellUser.setRegion(region);
+        sellUser.setStore_name(name);
+        return sellUserDao.queryNameCountByRegion(sellUser);
     }
 
     @Transactional(rollbackFor = {Exception.class})
     private void bindingPhone(String openid, String phoneNumber) {
-        SellUser sellUser = userDao.query(openid);
-        if (sellUser == null) {
-            SellUser newSellUser = new SellUser();
-            newSellUser.setOpenid(openid);
-            newSellUser.setPhone(phoneNumber);
-            userDao.insert(newSellUser);
+        String phone = sellUserDao.queryPhone(openid);
+        SellUser sellUser = new SellUser();
+        sellUser.setOpenid(openid);
+        sellUser.setPhone(phoneNumber);
+        if (phone == null) {
+            sellUserDao.insert(sellUser);
         } else {
-            sellUser.setPhone(phoneNumber);
-            userDao.updatePhone(sellUser);
+            sellUserDao.updatePhone(sellUser);
         }
     }
 }
