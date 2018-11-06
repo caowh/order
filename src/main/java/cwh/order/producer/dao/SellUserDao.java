@@ -15,8 +15,6 @@ public interface SellUserDao {
 
     void updatePhone(SellUser sellUser);
 
-    void updateStore(SellUser sellUser);
-
     void updateRegion(SellUser sellUser);
 
     void updateAddress(SellUser sellUser);

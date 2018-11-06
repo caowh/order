@@ -71,7 +71,7 @@ public class ProducerController {
         Map<String, Object> map = new HashMap<>();
         try {
             String openid = request.getAttribute("openid").toString();
-            configService.sendPhoneKey(openid, request.getParameter("phone"));
+            configService.sendPhoneKey(openid, getSafeParameter(request, "phone"));
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);
@@ -85,7 +85,7 @@ public class ProducerController {
         Map<String, Object> map = new HashMap<>();
         try {
             String openid = request.getAttribute("openid").toString();
-            configService.bindingPhone(openid, request.getParameter("phone"), request.getParameter("code"));
+            configService.bindingPhone(openid, getSafeParameter(request, "phone"), getSafeParameter(request, "code"));
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);
@@ -179,7 +179,7 @@ public class ProducerController {
     public Map<String, Object> checkStoreNameByRegion(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
-        String name = request.getParameter("name");
+        String name = getSafeParameter(request, "name");
         try {
             map.put("message", configService.checkStoreNameByRegion(openid, name));
             map.put("status", Constant.CODE_OK);
@@ -195,7 +195,7 @@ public class ProducerController {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
         try {
-            configService.configRegion(openid, request.getParameter("region"));
+            configService.configRegion(openid, getSafeParameter(request, "region"));
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);
@@ -209,7 +209,7 @@ public class ProducerController {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
         try {
-            configService.configAddress(openid, request.getParameter("address"));
+            configService.configAddress(openid, getSafeParameter(request, "address"));
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);
@@ -223,7 +223,7 @@ public class ProducerController {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
         try {
-            configService.configDescription(openid, request.getParameter("description"));
+            configService.configDescription(openid, getSafeParameter(request, "description"));
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);
@@ -252,7 +252,7 @@ public class ProducerController {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
         try {
-            configService.configStoreName(openid, request.getParameter("storeName"));
+            configService.configStoreName(openid, getSafeParameter(request, "storeName"));
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);
@@ -276,12 +276,12 @@ public class ProducerController {
         return map;
     }
 
-    @DeleteMapping("deleteStorePicture")
-    public Map<String, Object> deleteStorePicture(HttpServletRequest request) {
+    @PostMapping("deleteStorePictures")
+    public Map<String, Object> deleteStorePictures(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
         try {
-            configService.deleteStorePicture(openid, request.getParameter("storePictureUrl"));
+            configService.deleteStorePictures(openid, getSafeParameter(request, "storePictureUrls"));
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);
@@ -290,4 +290,8 @@ public class ProducerController {
         return map;
     }
 
+    private String getSafeParameter(HttpServletRequest request, String arg) {
+        return request.getParameter(arg).replaceAll("\"", "“").
+                replaceAll("'", "‘");
+    }
 }

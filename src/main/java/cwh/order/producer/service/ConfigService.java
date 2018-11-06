@@ -50,6 +50,6 @@ public interface ConfigService {
 
     void configStorePicture(String openid, MultipartFile file) throws HandleException;
 
-    void deleteStorePicture(String openid, String url) throws HandleException;
+    void deleteStorePictures(String openid, String urls) throws HandleException;
 
 }

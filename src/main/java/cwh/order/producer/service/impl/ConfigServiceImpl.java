@@ -224,16 +224,21 @@ public class ConfigServiceImpl implements ConfigService {
         return sellUserDao.queryNameCountByRegion(sellUser);
     }
 
+    @Transactional
     private String checkStoreName(String openid, String name) throws HandleException {
         if (name == null || name.equals("")) {
             throw new HandleException("名称不能为空");
         }
-        if (name.length() > 10) {
-            throw new HandleException("名称长度不能超过10个字符");
+        if (name.length() > 20) {
+            throw new HandleException("名称长度不能超过20个字符");
         }
         String region = sellUserDao.getRegion(openid);
         if (region == null) {
             throw new HandleException("请先设置地区");
+        }
+        String storeName = sellUserDao.getStoreName(openid);
+        if (storeName != null && storeName.equals(name)) {
+            throw new HandleException("名称修改前后不能一致");
         }
         return region;
     }
@@ -366,13 +371,20 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public void deleteStorePicture(String openid, String url) throws HandleException {
-        if (url == null || url.equals("")) {
+    @Transactional
+    public void deleteStorePictures(String openid, String urls) throws HandleException {
+        if (urls == null || urls.equals("")) {
             throw new HandleException("图片地址不能为空");
         }
-        storePictureDao.delete(url);
-        if (!FileUtil.delete(url)) {
-            logger.warn("delete file not success,openid is {},url is {}", openid, url);
+        String[] arr = urls.split(",");
+        for (String url : arr) {
+            StorePicture storePicture = new StorePicture();
+            storePicture.setOpenid(openid);
+            storePicture.setPic_url(url);
+            storePictureDao.delete(storePicture);
+            if (!FileUtil.delete(url)) {
+                logger.warn("delete file not success,openid is {},url is {}", openid, url);
+            }
         }
     }
 
@@ -389,7 +401,4 @@ public class ConfigServiceImpl implements ConfigService {
         }
     }
 
-    public static void main(String[] args) {
-
-    }
 }

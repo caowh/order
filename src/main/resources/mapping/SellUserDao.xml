@@ -10,34 +10,6 @@
         UPDATE SELL_USER SET phone = #{phone} WHERE openid = #{openid}
     </update>
 
-    <update id="updateStore" parameterType="cwh.order.producer.model.SellUser">
-        UPDATE SELL_USER
-        <trim prefix="set" suffixOverrides=",">
-            <if test="store_name != null">
-                store_name = #{store_name},
-            </if>
-            <if test="region != null">
-                region = #{region},
-            </if>
-            <if test="address != null">
-                address = #{address},
-            </if>
-            <if test="description != null">
-                description = #{description},
-            </if>
-            <if test="headPictureUrl != null">
-                headPictureUrl = #{headPictureUrl},
-            </if>
-            <if test="business != null">
-                business = #{business},
-            </if>
-            <if test="approval != null">
-                approval = #{approval},
-            </if>
-        </trim>
-        WHERE openid = #{openid}
-    </update>
-
     <select id="queryPhone" parameterType="java.lang.String" resultType="java.lang.String">
         SELECT phone FROM SELL_USER WHERE openid = #{openid}
     </select>
