@@ -20,7 +20,13 @@ public class FileUtil {
         return path + File.separator + fileName;
     }
 
-    public static void saveFile(InputStream inputStream, String fileName, String path) {
+    public static Boolean delete(String url) {
+        String path = Constant.FILEPATH + File.separator + url;
+        File file = new File(path);
+        return file.delete();
+    }
+
+    private static void saveFile(InputStream inputStream, String fileName, String path) {
         OutputStream os = null;
         try {
             // 1K的数据缓冲

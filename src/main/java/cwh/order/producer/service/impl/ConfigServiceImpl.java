@@ -179,17 +179,15 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public Map<String, String> getRegionAddress(String openid) {
-        Map<String, String> map = new HashMap<>();
-        SellUser sellUser = sellUserDao.getRegionAddress(openid);
-        String address = "", region = "";
-        if (sellUser != null) {
-            address = sellUser.getAddress();
-            region = sellUser.getRegion();
-        }
-        map.put("address", address);
-        map.put("region", region);
-        return map;
+    public String getRegion(String openid) {
+        String region = sellUserDao.getRegion(openid);
+        return region == null ? "" : region;
+    }
+
+    @Override
+    public String getAddress(String openid) {
+        String address = sellUserDao.getAddress(openid);
+        return address == null ? "" : address;
     }
 
     @Override
@@ -216,63 +214,28 @@ public class ConfigServiceImpl implements ConfigService {
         return list == null ? new ArrayList<>() : list;
     }
 
-
     @Override
-    @Transactional(rollbackFor = {HandleException.class})
-    public void configStore(Map<String, Object> map) throws HandleException {
-        Object name = map.get("name");
-        if (name == null) {
-            throw new HandleException("未填写店铺名称");
-        }
-        Object region = map.get("region");
-        if (region == null) {
-            throw new HandleException("未选择地区");
-        }
-        Object address = map.get("address");
-        if (address == null) {
-            throw new HandleException("未填写详细地址");
-        }
-        Object headPicture = map.get("headPicture");
-        if (headPicture == null) {
-            throw new HandleException("未上传头像");
-        }
-        SellUser sellUser = new SellUser();
-        String openid = map.get("openid").toString();
-        sellUser.setOpenid(openid);
-        sellUser.setRegion(region.toString());
-        sellUser.setAddress(address.toString());
-        sellUser.setDescription(map.get("description").toString());
-        sellUser.setStore_name(name.toString());
-        try {
-            sellUser.setHeadPicture_url(FileUtil.save((MultipartFile) headPicture));
-            Object storePictures = map.get("storePictures");
-            if (storePictures != null) {
-                for (MultipartFile file : (List<MultipartFile>) storePictures) {
-                    StorePicture storePicture = new StorePicture();
-                    storePicture.setOpenid(openid);
-                    storePicture.setPic_url(FileUtil.save(file));
-                    storePictureDao.insert(storePicture);
-                }
-            }
-        } catch (IOException e) {
-            logger.error("configStore throw IOException,openid is {},error is {}", openid, e.getMessage());
-            throw new HandleException("图片保存失败，稍后重试");
-        }
-        sellUserDao.updateStore(sellUser);
-    }
-
-    @Override
-    public int checkStoreNameByRegion(String region, String name) throws HandleException {
-        if (name == null) {
-            throw new HandleException("未填写店铺名称");
-        }
-        if (region == null) {
-            throw new HandleException("未选择地区");
-        }
+    @Transactional
+    public int checkStoreNameByRegion(String openid, String name) throws HandleException {
+        String region = checkStoreName(openid, name);
         SellUser sellUser = new SellUser();
         sellUser.setRegion(region);
         sellUser.setStore_name(name);
         return sellUserDao.queryNameCountByRegion(sellUser);
+    }
+
+    private String checkStoreName(String openid, String name) throws HandleException {
+        if (name == null || name.equals("")) {
+            throw new HandleException("名称不能为空");
+        }
+        if (name.length() > 10) {
+            throw new HandleException("名称长度不能超过10个字符");
+        }
+        String region = sellUserDao.getRegion(openid);
+        if (region == null) {
+            throw new HandleException("请先设置地区");
+        }
+        return region;
     }
 
     @Override
@@ -286,7 +249,7 @@ public class ConfigServiceImpl implements ConfigService {
             map.put("region", region);
             String storeName = sellUser.getStore_name() == null ? "" : sellUser.getStore_name();
             map.put("storeName", storeName);
-            String headPicture_url = sellUser.getHeadPicture_url() == null ? "" : sellUser.getHeadPicture_url();
+            String headPicture_url = sellUser.getHeadPictureUrl() == null ? "" : sellUser.getHeadPictureUrl();
             map.put("headPictureUrl", headPicture_url);
             String description = sellUser.getDescription() == null ? "" : sellUser.getDescription();
             map.put("description", description);
@@ -301,7 +264,7 @@ public class ConfigServiceImpl implements ConfigService {
         SellUser sellUser = sellUserDao.getStore(openid);
         Boolean store = false;
         if (sellUser != null && sellUser.getAddress() != null && sellUser.getRegion() != null && sellUser.getDescription() != null
-                && sellUser.getStore_name() != null && sellUser.getHeadPicture_url() != null) {
+                && sellUser.getStore_name() != null && sellUser.getHeadPictureUrl() != null) {
             store = true;
         }
         map.put("phone", this.getBindPhone(openid));
@@ -310,18 +273,123 @@ public class ConfigServiceImpl implements ConfigService {
         return map;
     }
 
+    @Override
+    public void configRegion(String openid, String region) throws HandleException {
+        if (region == null || region.equals("")) {
+            throw new HandleException("地区不能为空");
+        }
+        SellUser sellUser = new SellUser();
+        sellUser.setOpenid(openid);
+        sellUser.setRegion(region);
+        sellUserDao.updateRegion(sellUser);
+    }
+
+    @Override
+    public void configAddress(String openid, String address) throws HandleException {
+        if (address == null || address.equals("")) {
+            throw new HandleException("地址不能为空");
+        }
+        if (address.length() > 30) {
+            throw new HandleException("地址长度不能超过30个字符");
+        }
+        SellUser sellUser = new SellUser();
+        sellUser.setOpenid(openid);
+        sellUser.setAddress(address);
+        sellUserDao.updateAddress(sellUser);
+    }
+
+    @Override
+    @Transactional
+    public void configStoreName(String openid, String store_name) throws HandleException {
+        checkStoreName(openid, store_name);
+        SellUser sellUser = new SellUser();
+        sellUser.setOpenid(openid);
+        sellUser.setStore_name(store_name);
+        sellUserDao.updateStoreName(sellUser);
+    }
+
+    @Override
+    public void configDescription(String openid, String description) throws HandleException {
+        if (description == null || description.equals("")) {
+            throw new HandleException("简介不能为空");
+        }
+        if (description.length() > 100) {
+            throw new HandleException("简介长度不能超过100个字符");
+        }
+        SellUser sellUser = new SellUser();
+        sellUser.setOpenid(openid);
+        sellUser.setDescription(description);
+        sellUserDao.updateDescription(sellUser);
+    }
+
+    @Override
+    @Transactional
+    public void configHeadPicture(String openid, MultipartFile file) throws HandleException {
+        if (file == null) {
+            throw new HandleException("头像不能为空");
+        }
+        String url = sellUserDao.getHeadPictureUrl(openid);
+        SellUser sellUser = new SellUser();
+        sellUser.setOpenid(openid);
+        try {
+            sellUser.setHeadPictureUrl(FileUtil.save(file));
+        } catch (IOException e) {
+            logger.error("configHeadPicture throw IOException,openid is {},filename is {},error is {}", openid, file.getOriginalFilename(), e.getMessage());
+            throw new HandleException(Constant.ERROR);
+        }
+        sellUserDao.updateHeadPictureUrl(sellUser);
+        if (url != null) {
+            if (!FileUtil.delete(url)) {
+                logger.warn("delete file not success,openid is {},url is {}", openid, url);
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void configStorePicture(String openid, MultipartFile file) throws HandleException {
+        if (file == null) {
+            throw new HandleException("图片不能为空");
+        }
+        if (storePictureDao.getStorePictureCount(openid) >= 6) {
+            throw new HandleException("最多只能添加六张图片");
+        }
+        StorePicture storePicture = new StorePicture();
+        try {
+            storePicture.setPic_url(FileUtil.save(file));
+        } catch (IOException e) {
+            logger.error("configHeadPicture throw IOException,openid is {},filename is {},error is {}", openid, file.getOriginalFilename(), e.getMessage());
+            throw new HandleException(Constant.ERROR);
+        }
+        storePicture.setOpenid(openid);
+        storePictureDao.insert(storePicture);
+    }
+
+    @Override
+    public void deleteStorePicture(String openid, String url) throws HandleException {
+        if (url == null || url.equals("")) {
+            throw new HandleException("图片地址不能为空");
+        }
+        storePictureDao.delete(url);
+        if (!FileUtil.delete(url)) {
+            logger.warn("delete file not success,openid is {},url is {}", openid, url);
+        }
+    }
+
     @Transactional(rollbackFor = {Exception.class})
     private void bindingPhone(String openid, String phoneNumber) {
         String phone = sellUserDao.queryPhone(openid);
         SellUser sellUser = new SellUser();
         sellUser.setOpenid(openid);
         sellUser.setPhone(phoneNumber);
-        sellUser.setBusiness(0);
-        sellUser.setApproval(0);
         if (phone == null) {
             sellUserDao.insert(sellUser);
         } else {
             sellUserDao.updatePhone(sellUser);
         }
+    }
+
+    public static void main(String[] args) {
+
     }
 }

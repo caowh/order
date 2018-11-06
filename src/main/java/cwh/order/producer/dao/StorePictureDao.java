@@ -16,4 +16,6 @@ public interface StorePictureDao {
     List<String> getStorePictureUrls(String openid);
 
     int getStorePictureCount(String openid);
+
+    void delete(String pic_url);
 }

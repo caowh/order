@@ -14,7 +14,7 @@ public class SellUser {
     private String region;
     private String address;
     private String description;
-    private String headPicture_url;
+    private String headPictureUrl;
     private int business;
     private int approval;
 }

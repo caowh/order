@@ -25,8 +25,8 @@
             <if test="description != null">
                 description = #{description},
             </if>
-            <if test="headPicture_url != null">
-                headPicture_url = #{headPicture_url},
+            <if test="headPictureUrl != null">
+                headPictureUrl = #{headPictureUrl},
             </if>
             <if test="business != null">
                 business = #{business},
@@ -42,20 +42,25 @@
         SELECT phone FROM SELL_USER WHERE openid = #{openid}
     </select>
 
-    <select id="queryNameCountByRegion" parameterType="cwh.order.producer.model.SellUser" resultType="java.lang.Integer">
+    <select id="queryNameCountByRegion" parameterType="cwh.order.producer.model.SellUser"
+            resultType="java.lang.Integer">
         SELECT count(0) FROM SELL_USER WHERE region = #{region} AND store_name = #{store_name}
     </select>
-    
+
     <select id="getStore" parameterType="java.lang.String" resultType="cwh.order.producer.model.SellUser">
-        SELECT store_name,region,address,description,headPicture_url FROM SELL_USER WHERE openid = #{openid}
+        SELECT store_name,region,address,description,headPictureUrl FROM SELL_USER WHERE openid = #{openid}
     </select>
 
-    <select id="getRegionAddress" parameterType="java.lang.String" resultType="cwh.order.producer.model.SellUser">
-        SELECT region,address FROM SELL_USER WHERE openid = #{openid}
+    <select id="getRegion" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT region FROM SELL_USER WHERE openid = #{openid}
+    </select>
+
+    <select id="getAddress" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT address FROM SELL_USER WHERE openid = #{openid}
     </select>
 
     <select id="getHeadPictureUrl" parameterType="java.lang.String" resultType="java.lang.String">
-        SELECT headPicture_url FROM SELL_USER WHERE openid = #{openid}
+        SELECT headPictureUrl FROM SELL_USER WHERE openid = #{openid}
     </select>
 
     <select id="getStoreName" parameterType="java.lang.String" resultType="java.lang.String">
@@ -69,4 +74,24 @@
     <select id="getApproval" parameterType="java.lang.String" resultType="java.lang.Integer">
         SELECT approval FROM SELL_USER WHERE openid = #{openid}
     </select>
+
+    <update id="updateRegion" parameterType="cwh.order.producer.model.SellUser">
+        UPDATE SELL_USER SET region = #{region} WHERE openid = #{openid}
+    </update>
+
+    <update id="updateAddress" parameterType="cwh.order.producer.model.SellUser">
+        UPDATE SELL_USER SET address = #{address} WHERE openid = #{openid}
+    </update>
+
+    <update id="updateStoreName" parameterType="cwh.order.producer.model.SellUser">
+        UPDATE SELL_USER SET store_name = #{store_name} WHERE openid = #{openid}
+    </update>
+
+    <update id="updateDescription" parameterType="cwh.order.producer.model.SellUser">
+        UPDATE SELL_USER SET description = #{description} WHERE openid = #{openid}
+    </update>
+
+    <update id="updateHeadPictureUrl" parameterType="cwh.order.producer.model.SellUser">
+        UPDATE SELL_USER SET headPictureUrl = #{headPictureUrl} WHERE openid = #{openid}
+    </update>
 </mapper>

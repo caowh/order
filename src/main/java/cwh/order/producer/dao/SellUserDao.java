@@ -17,9 +17,21 @@ public interface SellUserDao {
 
     void updateStore(SellUser sellUser);
 
+    void updateRegion(SellUser sellUser);
+
+    void updateAddress(SellUser sellUser);
+
+    void updateStoreName(SellUser sellUser);
+
+    void updateDescription(SellUser sellUser);
+
+    void updateHeadPictureUrl(SellUser sellUser);
+
     int queryNameCountByRegion(SellUser sellUser);
 
-    SellUser getRegionAddress(String openid);
+    String getRegion(String openid);
+
+    String getAddress(String openid);
 
     String getHeadPictureUrl(String openid);
 
