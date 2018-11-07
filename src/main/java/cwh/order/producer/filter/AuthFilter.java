@@ -68,6 +68,13 @@ public class AuthFilter implements Filter {
                     httpServletResponse.getWriter().write(JSON.toJSONString(map));
                     return;
                 }
+                if ((!url.contains("/producer/") || url.endsWith("Business")) && sellUserDao.getApproval(o.toString()) != 2) {
+                    httpServletResponse.setStatus(200);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("status", Constant.NO_APPROVAL);
+                    httpServletResponse.getWriter().write(JSON.toJSONString(map));
+                    return;
+                }
                 httpServletRequest.setAttribute("openid", o);
                 filterChain.doFilter(httpServletRequest, httpServletResponse);
             }

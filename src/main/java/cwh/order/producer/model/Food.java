@@ -16,5 +16,7 @@ public class Food {
     private BigDecimal price;
     private int surplusCount;
     private String openid;
+    private int status;
+
 
 }

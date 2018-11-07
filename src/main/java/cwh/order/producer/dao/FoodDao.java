@@ -4,6 +4,7 @@ import cwh.order.producer.model.Food;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 曹文豪 on 2018/10/30.
@@ -12,5 +13,5 @@ import java.util.List;
 public interface FoodDao {
 
     void insert(Food food);
-    List<Food> queryFoodsByUser(String openid);
+    List<Map<String,Object>> queryFoods(String openid);
 }

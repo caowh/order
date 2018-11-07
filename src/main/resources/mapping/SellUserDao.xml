@@ -39,6 +39,14 @@
         SELECT store_name FROM SELL_USER WHERE openid = #{openid}
     </select>
 
+    <select id="getBusiness" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT business FROM SELL_USER WHERE openid = #{openid}
+    </select>
+
+    <select id="getApprovalMsg" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT approval_msg FROM SELL_USER WHERE openid = #{openid}
+    </select>
+
     <select id="getDescription" parameterType="java.lang.String" resultType="java.lang.String">
         SELECT description FROM SELL_USER WHERE openid = #{openid}
     </select>
@@ -65,5 +73,13 @@
 
     <update id="updateHeadPictureUrl" parameterType="cwh.order.producer.model.SellUser">
         UPDATE SELL_USER SET headPictureUrl = #{headPictureUrl} WHERE openid = #{openid}
+    </update>
+
+    <update id="updateApproval" parameterType="cwh.order.producer.model.SellUser">
+        UPDATE SELL_USER SET approval = #{approval} WHERE openid = #{openid}
+    </update>
+
+    <update id="updateBusiness" parameterType="cwh.order.producer.model.SellUser">
+        UPDATE SELL_USER SET business = #{business} WHERE openid = #{openid}
     </update>
 </mapper>

@@ -15,7 +15,7 @@ public class FileUtil {
         String path = cal.get(Calendar.YEAR)
                 + File.separator + cal.get(Calendar.MONTH) + File.separator + cal.get(Calendar.DATE);
         String name = file.getOriginalFilename();
-        String fileName = System.currentTimeMillis() + name.substring(name.indexOf("."), name.length());
+        String fileName = System.currentTimeMillis() + name.substring(name.lastIndexOf("."), name.length());
         FileUtil.saveFile(file.getInputStream(), fileName, Constant.FILEPATH + File.separator + path);
         return path + File.separator + fileName;
     }

@@ -5,19 +5,21 @@ import cwh.order.producer.dao.FoodPictureDao;
 import cwh.order.producer.model.Food;
 import cwh.order.producer.model.FoodPicture;
 import cwh.order.producer.service.FoodService;
+import cwh.order.producer.util.Constant;
 import cwh.order.producer.util.FileUtil;
+import cwh.order.producer.util.HandleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * Created by 曹文豪 on 2018/10/30.
@@ -31,49 +33,32 @@ public class FoodServiceImpl implements FoodService {
     @Resource
     private FoodPictureDao foodPictureDao;
 
-    public void add(HttpServletRequest request) {
-        /*
-          1、添加菜，初始数量为0
-          2、存储图片，生成访问url，如果上传失败，允许菜添加成功，图片可以后续上传变更
-          3、url生成成功后，根据food_id，建立菜和图片的关联关系；每上传成功一张图，建立一次关联关系，捕获异常互相不影响
-          */
-        String openid = request.getAttribute("openid").toString();
-        String name = request.getParameter("name");
-        String description = request.getParameter("description");
-        BigDecimal price = new BigDecimal(request.getParameter("price"));
+    @Override
+    @Transactional
+    public void add(String openid, String name, String description, BigDecimal price, MultipartFile file) throws HandleException {
         Food food = new Food();
         food.setF_name(name);
         food.setDescription(description);
         food.setPrice(price);
-        food.setSurplusCount(0);
         food.setOpenid(openid);
         foodDao.insert(food);
-
-        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        List<MultipartFile> files = multipartRequest.getFiles("foodFiles");
         long food_id = food.getId();
-        for (MultipartFile file : files) {
-            try {
-                String url = FileUtil.save(file);
-                FoodPicture foodPicture = new FoodPicture();
-                foodPicture.setFood_id(food_id);
-                foodPicture.setPic_url(url);
-                foodPictureDao.insert(foodPicture);
-            } catch (Exception e) {
-                logger.info("upload food picture {} failed,openid is {}", file.getOriginalFilename(), openid);
-                e.printStackTrace();
-            }
+        FoodPicture foodPicture = new FoodPicture();
+        try {
+            foodPicture.setPic_url(FileUtil.save(file));
+        } catch (IOException e) {
+            logger.error("upload food picture IOException,openid is {},food is {},file is {}", openid, name, file.getOriginalFilename());
+            throw new HandleException(Constant.ERROR);
         }
+        foodPicture.setFood_id(food_id);
+        foodPictureDao.insert(foodPicture);
     }
 
     @Override
-    public List<Map> queryFoodsByUser(String openid) {
-        List<Map> list = new ArrayList<>();
-        List<Food> foods = foodDao.queryFoodsByUser(openid);
-        for (Food food : foods) {
-
-        }
-        return list;
+    public List<Map<String, Object>> getFoods(String openid) {
+        foodDao.queryFoods(openid);
+        return null;
     }
+
 
 }

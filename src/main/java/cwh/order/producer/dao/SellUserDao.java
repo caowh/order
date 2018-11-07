@@ -25,6 +25,10 @@ public interface SellUserDao {
 
     void updateHeadPictureUrl(SellUser sellUser);
 
+    void updateApproval(SellUser sellUser);
+
+    void updateBusiness(SellUser sellUser);
+
     int queryNameCountByRegion(SellUser sellUser);
 
     String getRegion(String openid);
@@ -37,8 +41,12 @@ public interface SellUserDao {
 
     String getDescription(String openid);
 
+    String getApprovalMsg(String openid);
+
     SellUser getStore(String openid);
 
     int getApproval(String openid);
+
+    int getBusiness(String openid);
 
 }

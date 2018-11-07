@@ -52,4 +52,10 @@ public interface ConfigService {
 
     void deleteStorePictures(String openid, String urls) throws HandleException;
 
+    void initiateApproval(String openid) throws HandleException;
+
+    int getBusiness(String openid);
+
+    void configBusiness(String openid, int business) throws HandleException;
+
 }

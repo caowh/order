@@ -17,4 +17,5 @@ public class SellUser {
     private String headPictureUrl;
     private int business;
     private int approval;
+    private String approval_msg;
 }

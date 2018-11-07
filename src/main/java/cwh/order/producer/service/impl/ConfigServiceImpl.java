@@ -266,16 +266,28 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public Map<String, Object> getSettingStatus(String openid) {
         Map<String, Object> map = new HashMap<>();
+        Boolean store = checkStore(openid);
+        map.put("phone", this.getBindPhone(openid));
+        map.put("store", store);
+        Map<String, Object> approvalMap = new HashMap<>();
+        int approval = sellUserDao.getApproval(openid);
+        approvalMap.put("status", approval);
+        if (approval == 3) {
+            approvalMap.put("reason", sellUserDao.getApprovalMsg(openid));
+        }
+        map.put("approval", approvalMap);
+        map.put("business", sellUserDao.getBusiness(openid) == 1);
+        return map;
+    }
+
+    private Boolean checkStore(String openid) {
         SellUser sellUser = sellUserDao.getStore(openid);
         Boolean store = false;
         if (sellUser != null && sellUser.getAddress() != null && sellUser.getRegion() != null && sellUser.getDescription() != null
                 && sellUser.getStore_name() != null && sellUser.getHeadPictureUrl() != null) {
             store = true;
         }
-        map.put("phone", this.getBindPhone(openid));
-        map.put("store", store);
-        map.put("approval", sellUserDao.getApproval(openid) == 1);
-        return map;
+        return store;
     }
 
     @Override
@@ -374,7 +386,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Transactional
     public void deleteStorePictures(String openid, String urls) throws HandleException {
         if (urls == null || urls.equals("")) {
-            throw new HandleException("图片地址不能为空");
+            throw new HandleException("请至少选择一张图片");
         }
         String[] arr = urls.split(",");
         for (String url : arr) {
@@ -386,6 +398,40 @@ public class ConfigServiceImpl implements ConfigService {
                 logger.warn("delete file not success,openid is {},url is {}", openid, url);
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public void initiateApproval(String openid) throws HandleException {
+        if (!checkStore(openid)) {
+            throw new HandleException("请先完善门店信息");
+        }
+        int approval = sellUserDao.getApproval(openid);
+        if (approval == 1) {
+            throw new HandleException("审批中，请等待");
+        } else if (approval == 2) {
+            throw new HandleException("审批已通过");
+        }
+        SellUser sellUser = new SellUser();
+        sellUser.setOpenid(openid);
+        sellUser.setApproval(1);
+        sellUserDao.updateApproval(sellUser);
+    }
+
+    @Override
+    public int getBusiness(String openid) {
+        return sellUserDao.getBusiness(openid);
+    }
+
+    @Override
+    public void configBusiness(String openid, int business) throws HandleException {
+        if (business != 0 && business != 1) {
+            throw new HandleException("不支持该操作");
+        }
+        SellUser sellUser = new SellUser();
+        sellUser.setOpenid(openid);
+        sellUser.setBusiness(business);
+        sellUserDao.updateBusiness(sellUser);
     }
 
     @Transactional(rollbackFor = {Exception.class})

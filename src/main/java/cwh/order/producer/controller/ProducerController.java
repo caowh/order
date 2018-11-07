@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+import static cwh.order.producer.util.Constant.getSafeParameter;
+
 /**
  * Created by 曹文豪 on 2018/10/30.
  */
@@ -18,8 +20,6 @@ import java.util.Map;
 @RequestMapping("producer")
 public class ProducerController {
 
-    //    @Resource
-//    private FoodService foodService;
     @Resource
     private ConfigService configService;
 
@@ -35,36 +35,6 @@ public class ProducerController {
         }
         return map;
     }
-
-//    @PostMapping("addFood")
-//    public Map<String, Object> addFood(HttpServletRequest request) {
-//        Map<String, Object> map = new HashMap<>();
-//        try {
-//            foodService.add(request);
-//            map.put("status", Constant.CODE_OK);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            map.put("status", Constant.CODE_ERROR);
-//            map.put("error_message", e.getMessage());
-//        }
-//        return map;
-//    }
-//
-//    @GetMapping("queryFoods")
-//    public Map<String, Object> queryFoods(HttpServletRequest request) {
-//        Map<String, Object> map = new HashMap<>();
-//        try {
-//            String openid = request.getAttribute("openid").toString();
-//            List<Map> foods = foodService.queryFoodsByUser(openid);
-//            map.put("status", Constant.CODE_OK);
-//            map.put("message", foods);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            map.put("status", Constant.CODE_ERROR);
-//            map.put("error_message", e.getMessage());
-//        }
-//        return map;
-//    }
 
     @PostMapping("sendPhoneKey")
     public Map<String, Object> sendPhoneKey(HttpServletRequest request) {
@@ -290,8 +260,40 @@ public class ProducerController {
         return map;
     }
 
-    private String getSafeParameter(HttpServletRequest request, String arg) {
-        return request.getParameter(arg).replaceAll("\"", "“").
-                replaceAll("'", "‘");
+    @PostMapping("initiateApproval")
+    public Map<String, Object> initiateApproval(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        try {
+            configService.initiateApproval(openid);
+            map.put("status", Constant.CODE_OK);
+        } catch (HandleException e) {
+            map.put("status", Constant.CODE_ERROR);
+            map.put("error_message", e.getMessage());
+        }
+        return map;
+    }
+
+    @PostMapping("configBusiness")
+    public Map<String, Object> configBusiness(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        try {
+            configService.configBusiness(openid, Integer.parseInt(getSafeParameter(request, "business")));
+            map.put("status", Constant.CODE_OK);
+        } catch (HandleException e) {
+            map.put("status", Constant.CODE_ERROR);
+            map.put("error_message", e.getMessage());
+        }
+        return map;
+    }
+
+    @GetMapping("getBusiness")
+    public Map<String, Object> getBusiness(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        map.put("message", configService.getBusiness(openid));
+        map.put("status", Constant.CODE_OK);
+        return map;
     }
 }
