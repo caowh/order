@@ -15,5 +15,11 @@ public interface FoodService {
 
     void add(String openid, String name, String description, BigDecimal price, MultipartFile file) throws HandleException;
 
-    List<Map<String,Object>> getFoods(String openid);
+    List<Map<String, Object>> getFoods(String openid);
+
+    void addFoodClassify(String openid, String name) throws HandleException;
+
+    void deleteFoodClassify(String openid, String name) throws HandleException;
+
+    List<String> getFoodClassifyNames(String openid);
 }

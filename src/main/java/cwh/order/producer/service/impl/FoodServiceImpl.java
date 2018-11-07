@@ -1,8 +1,10 @@
 package cwh.order.producer.service.impl;
 
+import cwh.order.producer.dao.FoodClassifyDao;
 import cwh.order.producer.dao.FoodDao;
 import cwh.order.producer.dao.FoodPictureDao;
 import cwh.order.producer.model.Food;
+import cwh.order.producer.model.FoodClassify;
 import cwh.order.producer.model.FoodPicture;
 import cwh.order.producer.service.FoodService;
 import cwh.order.producer.util.Constant;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +35,8 @@ public class FoodServiceImpl implements FoodService {
     private FoodDao foodDao;
     @Resource
     private FoodPictureDao foodPictureDao;
+    @Resource
+    private FoodClassifyDao foodClassifyDao;
 
     @Override
     @Transactional
@@ -58,6 +63,48 @@ public class FoodServiceImpl implements FoodService {
     public List<Map<String, Object>> getFoods(String openid) {
         foodDao.queryFoods(openid);
         return null;
+    }
+
+    @Override
+    @Transactional
+    public void addFoodClassify(String openid, String name) throws HandleException {
+        checkClassifyName(name);
+        List<String> names = foodClassifyDao.queryNames(openid);
+        if (names != null && names.contains(name)) {
+            throw new HandleException("名称已存在");
+        }
+        FoodClassify foodClassify = new FoodClassify();
+        foodClassify.setClassify_name(name);
+        foodClassify.setOpenid(openid);
+        foodClassifyDao.insert(foodClassify);
+    }
+
+    private void checkClassifyName(String name) throws HandleException {
+        if (name == null || name.equals("")) {
+            throw new HandleException("名称不能为空");
+        }
+        if (name.length() > 10) {
+            throw new HandleException("名称不能超过10个字符");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteFoodClassify(String openid, String name) throws HandleException {
+        checkClassifyName(name);
+        FoodClassify foodClassify = new FoodClassify();
+        foodClassify.setClassify_name(name);
+        foodClassify.setOpenid(openid);
+        int result = foodClassifyDao.delete(foodClassify);
+        if (result == 0) {
+            throw new HandleException("名称不存在");
+        }
+    }
+
+    @Override
+    public List<String> getFoodClassifyNames(String openid) {
+        List<String> names = foodClassifyDao.queryNames(openid);
+        return names == null ? new ArrayList<>() : names;
     }
 
 

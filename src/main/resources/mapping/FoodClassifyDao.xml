@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cwh.order.producer.dao.FoodClassifyDao">
+
+    <insert id="insert" parameterType="cwh.order.producer.model.FoodClassify">
+      INSERT INTO FOOD_CLASSIFY(openid,classify_name) VALUES (#{openid},#{classify_name});
+    </insert>
+
+    <select id="queryNames" parameterType="java.lang.String" resultType="java.lang.String">
+      SELECT classify_name FROM FOOD_CLASSIFY WHERE openid = #{openid}
+    </select>
+
+    <delete id="delete" parameterType="cwh.order.producer.model.FoodClassify">
+        DELETE FROM FOOD_CLASSIFY WHERE openid = #{openid} AND classify_name = #{classify_name}
+    </delete>
+
+</mapper>

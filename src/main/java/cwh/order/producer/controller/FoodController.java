@@ -3,6 +3,7 @@ package cwh.order.producer.controller;
 import cwh.order.producer.service.FoodService;
 import cwh.order.producer.util.Constant;
 import cwh.order.producer.util.HandleException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -39,6 +40,45 @@ public class FoodController {
         MultipartFile file = multipartRequest.getFile("foodPicture");
         try {
             foodService.add(openid, name, description, price, file);
+            map.put("status", Constant.CODE_OK);
+        } catch (HandleException e) {
+            map.put("status", Constant.CODE_ERROR);
+            map.put("error_message", e.getMessage());
+        }
+        return map;
+    }
+
+    @PostMapping("addClassify")
+    public Map<String, Object> addClassify(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        String name = getSafeParameter(request, "name");
+        try {
+            foodService.addFoodClassify(openid, name);
+            map.put("status", Constant.CODE_OK);
+        } catch (HandleException e) {
+            map.put("status", Constant.CODE_ERROR);
+            map.put("error_message", e.getMessage());
+        }
+        return map;
+    }
+
+    @GetMapping("getClassifyNames")
+    public Map<String, Object> getClassifyNames(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        map.put("message", foodService.getFoodClassifyNames(openid));
+        map.put("status", Constant.CODE_OK);
+        return map;
+    }
+
+    @PostMapping("deleteClassify")
+    public Map<String, Object> deleteClassify(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        String name = getSafeParameter(request, "name");
+        try {
+            foodService.deleteFoodClassify(openid, name);
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);
