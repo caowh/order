@@ -11,4 +11,5 @@ public class FoodClassify {
     private long id;
     private String classify_name;
     private String openid;
+    private int classify_sort;
 }

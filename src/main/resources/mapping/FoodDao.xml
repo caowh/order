@@ -7,7 +7,7 @@
     </resultMap>
 
     <insert id="insert" parameterType="cwh.order.producer.model.Food" useGeneratedKeys="true" keyProperty="id">
-      INSERT INTO FOOD(f_name,description,price,surplusCount,openid) VALUES (#{f_name},#{description},#{price},#{openid});
+      INSERT INTO FOOD(f_name,description,price,surplusCount,classify_id) VALUES (#{f_name},#{description},#{price},#{classify_id});
     </insert>
 
     <select id="queryFoods" parameterType="java.lang.String" resultMap="foodDetail">

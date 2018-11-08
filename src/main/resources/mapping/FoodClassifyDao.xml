@@ -3,15 +3,30 @@
 <mapper namespace="cwh.order.producer.dao.FoodClassifyDao">
 
     <insert id="insert" parameterType="cwh.order.producer.model.FoodClassify">
-      INSERT INTO FOOD_CLASSIFY(openid,classify_name) VALUES (#{openid},#{classify_name});
+      INSERT INTO FOOD_CLASSIFY(openid,classify_name,classify_sort) VALUES (#{openid},#{classify_name},#{classify_sort});
     </insert>
 
-    <select id="queryNames" parameterType="java.lang.String" resultType="java.lang.String">
-      SELECT classify_name FROM FOOD_CLASSIFY WHERE openid = #{openid}
+    <select id="queryAll" parameterType="java.lang.String" resultType="cwh.order.producer.model.FoodClassify">
+      SELECT id,classify_name,classify_sort FROM FOOD_CLASSIFY WHERE openid = #{openid} ORDER BY classify_sort
     </select>
 
-    <delete id="delete" parameterType="cwh.order.producer.model.FoodClassify">
-        DELETE FROM FOOD_CLASSIFY WHERE openid = #{openid} AND classify_name = #{classify_name}
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM FOOD_CLASSIFY WHERE id = #{id}
     </delete>
 
+    <select id="queryExistName" parameterType="cwh.order.producer.model.FoodClassify" resultType="java.lang.Integer">
+        SELECT count(0) FROM FOOD_CLASSIFY WHERE openid = #{openid} AND classify_name = #{classify_name}
+    </select>
+
+    <select id="queryExistId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT count(0) FROM FOOD_CLASSIFY WHERE id = #{id}
+    </select>
+
+    <select id="queryMaxSort" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT MAX(classify_sort) FROM FOOD_CLASSIFY WHERE openid = #{openid}
+    </select>
+
+    <update id="updatePosition" parameterType="cwh.order.producer.model.FoodClassify">
+        UPDATE FOOD_CLASSIFY SET classify_sort = #{classify_sort} WHERE id = #{id}
+    </update>
 </mapper>

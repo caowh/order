@@ -35,11 +35,12 @@ public class FoodController {
         String openid = request.getAttribute("openid").toString();
         String name = getSafeParameter(request, "name");
         String description = getSafeParameter(request, "description");
+        long classifyId = Long.parseLong(getSafeParameter(request, "classifyId"));
         BigDecimal price = new BigDecimal(getSafeParameter(request, "price"));
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         MultipartFile file = multipartRequest.getFile("foodPicture");
         try {
-            foodService.add(openid, name, description, price, file);
+            foodService.add(openid, name, description, price, classifyId, file);
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);
@@ -63,11 +64,11 @@ public class FoodController {
         return map;
     }
 
-    @GetMapping("getClassifyNames")
-    public Map<String, Object> getClassifyNames(HttpServletRequest request) {
+    @GetMapping("getFoodClassifies")
+    public Map<String, Object> getFoodClassifies(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
-        map.put("message", foodService.getFoodClassifyNames(openid));
+        map.put("message", foodService.getFoodClassifies(openid));
         map.put("status", Constant.CODE_OK);
         return map;
     }
@@ -76,9 +77,9 @@ public class FoodController {
     public Map<String, Object> deleteClassify(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
-        String name = getSafeParameter(request, "name");
+        long id = Long.parseLong(getSafeParameter(request, "id"));
         try {
-            foodService.deleteFoodClassify(openid, name);
+            foodService.deleteFoodClassify(openid, id);
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);
@@ -86,4 +87,21 @@ public class FoodController {
         }
         return map;
     }
+
+    @PostMapping("classifySort")
+    public Map<String, Object> classifySort(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        long id = Long.parseLong(getSafeParameter(request, "id"));
+        int position = Integer.parseInt(getSafeParameter(request, "position"));
+        try {
+            foodService.classifySort(openid, id, position);
+            map.put("status", Constant.CODE_OK);
+        } catch (HandleException e) {
+            map.put("status", Constant.CODE_ERROR);
+            map.put("error_message", e.getMessage());
+        }
+        return map;
+    }
+
 }

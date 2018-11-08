@@ -1,9 +1,9 @@
 package cwh.order.producer.service;
 
+import cwh.order.producer.model.FoodClassify;
 import cwh.order.producer.util.HandleException;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -13,13 +13,15 @@ import java.util.Map;
  */
 public interface FoodService {
 
-    void add(String openid, String name, String description, BigDecimal price, MultipartFile file) throws HandleException;
+    void add(String openid, String name, String description, BigDecimal price, long classifyId, MultipartFile file) throws HandleException;
 
     List<Map<String, Object>> getFoods(String openid);
 
     void addFoodClassify(String openid, String name) throws HandleException;
 
-    void deleteFoodClassify(String openid, String name) throws HandleException;
+    void deleteFoodClassify(String openid, long id) throws HandleException;
 
-    List<String> getFoodClassifyNames(String openid);
+    List<FoodClassify> getFoodClassifies(String openid);
+
+    void classifySort(String openid, long id, int position) throws HandleException;
 }

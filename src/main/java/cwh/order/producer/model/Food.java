@@ -15,8 +15,8 @@ public class Food {
     private String description;
     private BigDecimal price;
     private int surplusCount;
-    private String openid;
     private int status;
+    private long classify_id;
 
 
 }

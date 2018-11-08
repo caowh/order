@@ -4,6 +4,7 @@ import cwh.order.producer.model.FoodClassify;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2018/11/7 0007.
@@ -13,7 +14,15 @@ public interface FoodClassifyDao {
 
     void insert(FoodClassify foodClassify);
 
-    int delete(FoodClassify foodClassify);
+    int delete(long id);
 
-    List<String> queryNames(String openid);
+    List<FoodClassify> queryAll(String openid);
+
+    int queryExistName(FoodClassify foodClassify);
+
+    int queryExistId(long id);
+
+    void updatePosition(FoodClassify foodClassify);
+
+    int queryMaxSort(String openid);
 }

@@ -264,6 +264,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
+    @Transactional
     public Map<String, Object> getSettingStatus(String openid) {
         Map<String, Object> map = new HashMap<>();
         Boolean store = checkStore(openid);
