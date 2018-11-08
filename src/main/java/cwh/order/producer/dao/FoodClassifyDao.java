@@ -20,7 +20,7 @@ public interface FoodClassifyDao {
 
     int queryExistName(FoodClassify foodClassify);
 
-    int queryExistId(long id);
+    int queryPosition(long id);
 
     void updatePosition(FoodClassify foodClassify);
 

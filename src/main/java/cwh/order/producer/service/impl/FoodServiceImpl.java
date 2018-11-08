@@ -53,7 +53,7 @@ public class FoodServiceImpl implements FoodService {
         if (file == null) {
             throw new HandleException("图片不能为空");
         }
-        if (foodClassifyDao.queryExistId(classifyId) == 0) {
+        if (foodClassifyDao.queryPosition(classifyId) == 0) {
             throw new HandleException("分类不存在");
         }
         Food food = new Food();
@@ -166,6 +166,24 @@ public class FoodServiceImpl implements FoodService {
                 }
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public void classifyPositionExchange(String openid, long id1, long id2) throws HandleException {
+        int position1 = foodClassifyDao.queryPosition(id1);
+        int position2 = foodClassifyDao.queryPosition(id2);
+        if (position1 == 0 || position2 == 0) {
+            throw new HandleException("分类不存在");
+        }
+        FoodClassify foodClassify1 = new FoodClassify();
+        foodClassify1.setId(id1);
+        foodClassify1.setClassify_sort(position2);
+        FoodClassify foodClassify2 = new FoodClassify();
+        foodClassify2.setId(id2);
+        foodClassify2.setClassify_sort(position1);
+        foodClassifyDao.updatePosition(foodClassify1);
+        foodClassifyDao.updatePosition(foodClassify2);
     }
 
 

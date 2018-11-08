@@ -24,4 +24,6 @@ public interface FoodService {
     List<FoodClassify> getFoodClassifies(String openid);
 
     void classifySort(String openid, long id, int position) throws HandleException;
+
+    void classifyPositionExchange(String openid, long id1, long id2) throws HandleException;
 }

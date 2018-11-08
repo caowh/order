@@ -18,12 +18,12 @@
         SELECT count(0) FROM FOOD_CLASSIFY WHERE openid = #{openid} AND classify_name = #{classify_name}
     </select>
 
-    <select id="queryExistId" parameterType="java.lang.Long" resultType="java.lang.Integer">
-        SELECT count(0) FROM FOOD_CLASSIFY WHERE id = #{id}
+    <select id="queryPosition" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT IFNULL(classify_sort,0) FROM FOOD_CLASSIFY WHERE id = #{id}
     </select>
 
     <select id="queryMaxSort" parameterType="java.lang.String" resultType="java.lang.Integer">
-        SELECT MAX(classify_sort) FROM FOOD_CLASSIFY WHERE openid = #{openid}
+        SELECT IFNULL(MAX(classify_sort),0) FROM FOOD_CLASSIFY WHERE openid = #{openid}
     </select>
 
     <update id="updatePosition" parameterType="cwh.order.producer.model.FoodClassify">

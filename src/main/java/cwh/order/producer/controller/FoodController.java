@@ -104,4 +104,20 @@ public class FoodController {
         return map;
     }
 
+    @PostMapping("classifyPositionExchange")
+    public Map<String, Object> classifyPositionExchange(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        long id1 = Long.parseLong(getSafeParameter(request, "id1"));
+        long id2 = Long.parseLong(getSafeParameter(request, "id2"));
+        try {
+            foodService.classifyPositionExchange(openid, id1, id2);
+            map.put("status", Constant.CODE_OK);
+        } catch (HandleException e) {
+            map.put("status", Constant.CODE_ERROR);
+            map.put("error_message", e.getMessage());
+        }
+        return map;
+    }
+
 }
