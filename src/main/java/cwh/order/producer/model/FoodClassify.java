@@ -12,4 +12,6 @@ public class FoodClassify {
     private String classify_name;
     private String openid;
     private int classify_sort;
+
+    private int food_count;
 }

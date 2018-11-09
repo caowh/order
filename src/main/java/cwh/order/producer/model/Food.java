@@ -14,9 +14,11 @@ public class Food {
     private String f_name;
     private String description;
     private BigDecimal price;
-    private int surplusCount;
     private int status;
     private long classify_id;
+    private String picture_url;
 
+    private int monthly_sale;
+    private int praise_count;
 
 }

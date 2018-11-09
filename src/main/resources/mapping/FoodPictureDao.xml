@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="cwh.order.producer.dao.FoodPictureDao">
-
-    <insert id="insert" parameterType="cwh.order.producer.model.FoodPicture">
-      INSERT INTO FOOD_PICTURE(food_id,pic_url) VALUES (#{food_id},#{pic_url});
-    </insert>
-
-</mapper>

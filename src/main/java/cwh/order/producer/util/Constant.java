@@ -37,4 +37,5 @@ public class Constant {
         return param == null ? "" : param.replaceAll("\"", "“").
                 replaceAll("'", "‘");
     }
+
 }

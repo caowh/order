@@ -20,9 +20,11 @@ public interface FoodClassifyDao {
 
     int queryExistName(FoodClassify foodClassify);
 
-    int queryPosition(long id);
+    int queryExistId(FoodClassify foodClassify);
 
-    void updatePosition(FoodClassify foodClassify);
+    int updatePosition(FoodClassify foodClassify);
 
     int queryMaxSort(String openid);
+
+    int updateName(FoodClassify foodClassify);
 }

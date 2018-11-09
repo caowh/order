@@ -13,5 +13,8 @@ import java.util.Map;
 public interface FoodDao {
 
     void insert(Food food);
-    List<Map<String,Object>> queryFoods(String openid);
+
+    List<Food> queryByClassify(long classify_id);
+
+    int queryExistFoodName(Map<String,String> map);
 }

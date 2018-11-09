@@ -92,10 +92,9 @@ public class FoodController {
     public Map<String, Object> classifySort(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
-        long id = Long.parseLong(getSafeParameter(request, "id"));
-        int position = Integer.parseInt(getSafeParameter(request, "position"));
+        String list = request.getParameter("list").replaceAll("\'", "‘");
         try {
-            foodService.classifySort(openid, id, position);
+            foodService.classifySort(openid, list);
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);
@@ -104,14 +103,14 @@ public class FoodController {
         return map;
     }
 
-    @PostMapping("classifyPositionExchange")
-    public Map<String, Object> classifyPositionExchange(HttpServletRequest request) {
+    @PostMapping("updateClassifyName")
+    public Map<String, Object> updateClassifyName(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
-        long id1 = Long.parseLong(getSafeParameter(request, "id1"));
-        long id2 = Long.parseLong(getSafeParameter(request, "id2"));
+        String name = getSafeParameter(request, "name");
+        long id = Long.parseLong(getSafeParameter(request, "id"));
         try {
-            foodService.classifyPositionExchange(openid, id1, id2);
+            foodService.updateClassifyName(openid, id, name);
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);
@@ -119,5 +118,16 @@ public class FoodController {
         }
         return map;
     }
+
+    @GetMapping("getFoodsByClassify")
+    public Map<String, Object> getFoodsByClassify(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        long id = Long.parseLong(getSafeParameter(request, "id"));
+        map.put("message", foodService.getFoodsByClassify(openid, id));
+        map.put("status", Constant.CODE_OK);
+        return map;
+    }
+
 
 }

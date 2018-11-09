@@ -2,16 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cwh.order.producer.dao.FoodDao">
 
-    <resultMap id="foodDetail" type="java.util.Map">
-
-    </resultMap>
-
-    <insert id="insert" parameterType="cwh.order.producer.model.Food" useGeneratedKeys="true" keyProperty="id">
-      INSERT INTO FOOD(f_name,description,price,surplusCount,classify_id) VALUES (#{f_name},#{description},#{price},#{classify_id});
+    <insert id="insert" parameterType="cwh.order.producer.model.Food">
+      INSERT INTO FOOD(f_name,description,price,classify_id,picture_url) VALUES (#{f_name},#{description},#{price},#{classify_id},#{picture_url});
     </insert>
 
-    <select id="queryFoods" parameterType="java.lang.String" resultMap="foodDetail">
-
+    <select id="queryByClassify" parameterType="java.lang.Long" resultType="cwh.order.producer.model.Food">
+        SELECT id,f_name,description,price,status,picture_url
+        FROM FOOD WHERE classify_id = #{classify_id} ORDER BY id DESC;
     </select>
 
+    <select id="queryExistFoodName" parameterType="java.util.Map" resultType="java.lang.Integer">
+        call queryExistFoodName(#{openid},#{name});
+    </select>
 </mapper>

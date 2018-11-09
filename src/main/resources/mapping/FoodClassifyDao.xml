@@ -7,7 +7,8 @@
     </insert>
 
     <select id="queryAll" parameterType="java.lang.String" resultType="cwh.order.producer.model.FoodClassify">
-      SELECT id,classify_name,classify_sort FROM FOOD_CLASSIFY WHERE openid = #{openid} ORDER BY classify_sort
+     SELECT f.id,f.classify_name,(select count(0) from FOOD where classify_id = f.id) AS food_count FROM FOOD_CLASSIFY f
+     WHERE openid = #{openid} ORDER BY classify_sort;
     </select>
 
     <delete id="delete" parameterType="java.lang.Long">
@@ -18,15 +19,19 @@
         SELECT count(0) FROM FOOD_CLASSIFY WHERE openid = #{openid} AND classify_name = #{classify_name}
     </select>
 
-    <select id="queryPosition" parameterType="java.lang.Long" resultType="java.lang.Integer">
-        SELECT IFNULL(classify_sort,0) FROM FOOD_CLASSIFY WHERE id = #{id}
+    <select id="queryExistId" parameterType="cwh.order.producer.model.FoodClassify" resultType="java.lang.Integer">
+        SELECT count(0) FROM FOOD_CLASSIFY WHERE id = #{id} AND  openid = #{openid}
     </select>
 
     <select id="queryMaxSort" parameterType="java.lang.String" resultType="java.lang.Integer">
-        SELECT IFNULL(MAX(classify_sort),0) FROM FOOD_CLASSIFY WHERE openid = #{openid}
+        SELECT IFNULL(MAX(classify_sort),-1) FROM FOOD_CLASSIFY WHERE openid = #{openid}
     </select>
 
     <update id="updatePosition" parameterType="cwh.order.producer.model.FoodClassify">
         UPDATE FOOD_CLASSIFY SET classify_sort = #{classify_sort} WHERE id = #{id}
+    </update>
+
+    <update id="updateName" parameterType="cwh.order.producer.model.FoodClassify">
+        UPDATE FOOD_CLASSIFY SET classify_name = #{classify_name} WHERE id = #{id}
     </update>
 </mapper>
