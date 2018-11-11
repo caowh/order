@@ -183,6 +183,9 @@ public class FoodServiceImpl implements FoodService {
     @Override
     @Transactional
     public void updateClassifyName(String openid, long id, String name) throws HandleException {
+        if (name.length() > 10) {
+            throw new HandleException("分类名称不能超过10个字符");
+        }
         FoodClassify foodClassify = new FoodClassify();
         foodClassify.setId(id);
         foodClassify.setClassify_name(name);

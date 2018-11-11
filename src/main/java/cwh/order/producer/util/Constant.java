@@ -35,7 +35,7 @@ public class Constant {
     public static String getSafeParameter(HttpServletRequest request, String arg) {
         String param = request.getParameter(arg);
         return param == null ? "" : param.replaceAll("\"", "“").
-                replaceAll("'", "‘");
+                replaceAll("'", "‘").trim();
     }
 
 }

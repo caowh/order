@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public interface ConfigService {
 
-    String getToken(String code) throws HandleException;
+    String getToken(String code, String appid) throws HandleException;
 
     void sendPhoneKey(String openid, String phoneNumber) throws HandleException;
 
@@ -58,4 +58,5 @@ public interface ConfigService {
 
     void configBusiness(String openid, int business) throws HandleException;
 
+    void addDAAN(String openid, String daan);
 }

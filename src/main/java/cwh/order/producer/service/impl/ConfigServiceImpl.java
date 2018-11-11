@@ -9,8 +9,10 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import cwh.order.producer.dao.DAANDao;
 import cwh.order.producer.dao.SellUserDao;
 import cwh.order.producer.dao.StorePictureDao;
+import cwh.order.producer.model.DAAN;
 import cwh.order.producer.model.SellUser;
 import cwh.order.producer.model.StorePicture;
 import cwh.order.producer.service.ConfigService;
@@ -27,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -44,11 +47,19 @@ public class ConfigServiceImpl implements ConfigService {
     private SellUserDao sellUserDao;
     @Resource
     private StorePictureDao storePictureDao;
+    @Resource
+    private DAANDao daanDao;
 
     @Override
-    public String getToken(String code) throws HandleException {
-        String url = String.format("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
-                , Constant.APPID, Constant.APPSECRET, code);
+    public String getToken(String code, String appid) throws HandleException {
+        String url;
+        if (appid == null || appid.equals("")) {
+            url = String.format("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
+                    , Constant.APPID, Constant.APPSECRET, code);
+        } else {
+            url = String.format("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
+                    , appid, "cb34637b94c0274bcac143cea554b72f", code);
+        }
         Request get = new Request.Builder().url(url).build();
         try {
             ResponseBody responseBody = client.newCall(get).execute().body();
@@ -433,6 +444,15 @@ public class ConfigServiceImpl implements ConfigService {
         sellUser.setOpenid(openid);
         sellUser.setBusiness(business);
         sellUserDao.updateBusiness(sellUser);
+    }
+
+    @Override
+    public void addDAAN(String openid, String daan) {
+        DAAN daan1 = new DAAN();
+        daan1.setD_data(daan);
+        daan1.setOpenid(openid);
+        daan1.setD_time(new Date(System.currentTimeMillis()));
+        daanDao.insert(daan1);
     }
 
     @Transactional(rollbackFor = {Exception.class})

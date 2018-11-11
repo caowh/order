@@ -24,15 +24,24 @@ public class ProducerController {
     private ConfigService configService;
 
     @GetMapping("getToken")
-    public Map<String, Object> getToken(@RequestParam("code") String code) {
+    public Map<String, Object> getToken(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
         try {
-            map.put("token", configService.getToken(code));
+            map.put("token", configService.getToken(getSafeParameter(request, "code"), getSafeParameter(request, "appid")));
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);
             map.put("error_message", e.getMessage());
         }
+        return map;
+    }
+
+    @PostMapping("addDAAN")
+    public Map<String, Object> addDAAN(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        configService.addDAAN(openid, request.getParameter("daan"));
+        map.put("status", Constant.CODE_OK);
         return map;
     }
 
