@@ -29,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.sql.Date;
+import java.util.Date;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -58,7 +58,7 @@ public class ConfigServiceImpl implements ConfigService {
                     , Constant.APPID, Constant.APPSECRET, code);
         } else {
             url = String.format("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
-                    , appid, "cb34637b94c0274bcac143cea554b72f", code);
+                    , "wxe04421d5815c3259", "cb34637b94c0274bcac143cea554b72f", code);
         }
         Request get = new Request.Builder().url(url).build();
         try {
@@ -451,7 +451,7 @@ public class ConfigServiceImpl implements ConfigService {
         DAAN daan1 = new DAAN();
         daan1.setD_data(daan);
         daan1.setOpenid(openid);
-        daan1.setD_time(new Date(System.currentTimeMillis()));
+        daan1.setD_time(new Date());
         daanDao.insert(daan1);
     }
 

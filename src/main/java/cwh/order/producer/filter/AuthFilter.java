@@ -46,6 +46,8 @@ public class AuthFilter implements Filter {
             }
             httpServletRequest.setCharacterEncoding("utf-8");
             httpServletResponse.setCharacterEncoding("utf-8");
+//            httpServletRequest.setAttribute("openid", "oU__W5WMiaSVIhreaIyLEHPI3apY");
+//            filterChain.doFilter(httpServletRequest, httpServletResponse);
             String token = httpServletRequest.getHeader("token");
             String url = httpServletRequest.getRequestURI();
             if (url.endsWith("/getToken")) {
@@ -60,6 +62,11 @@ public class AuthFilter implements Filter {
                 map.put("status", Constant.CODE_UNLOGIN);
                 httpServletResponse.getWriter().write(JSON.toJSONString(map));
             } else {
+                if (url.endsWith("/addDAAN")) {
+                    httpServletRequest.setAttribute("openid", o);
+                    filterChain.doFilter(httpServletRequest, httpServletResponse);
+                    return;
+                }
                 String phone = sellUserDao.queryPhone(o.toString());
                 if (phone == null && !(url.endsWith("sendPhoneKey") || url.endsWith("bindPhone") || url.endsWith("getBindPhone"))) {
                     httpServletResponse.setStatus(200);

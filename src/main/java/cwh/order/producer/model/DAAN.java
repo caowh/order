@@ -2,7 +2,7 @@ package cwh.order.producer.model;
 
 import lombok.Data;
 
-import java.sql.Date;
+import java.util.Date;
 
 /**
  * Created by Administrator on 2018/11/11 0011.

@@ -9,6 +9,7 @@ import cwh.order.producer.service.FoodService;
 import cwh.order.producer.util.Constant;
 import cwh.order.producer.util.FileUtil;
 import cwh.order.producer.util.HandleException;
+import cwh.order.producer.util.PageQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,7 @@ public class FoodServiceImpl implements FoodService {
         Map<String, String> map = new HashMap<>();
         map.put("openid", openid);
         map.put("name", name);
-        if (foodDao.queryExistFoodName(map) != 0) {
+        if (foodDao.queryExistName(map) != 0) {
             throw new HandleException("菜品名称已存在");
         }
         Food food = new Food();
@@ -97,8 +98,15 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
+    @Transactional
     public void deleteFoodClassify(String openid, long id) throws HandleException {
-        int result = foodClassifyDao.delete(id);
+        if (foodDao.queryCountByClassify(id) > 0) {
+            throw new HandleException("分类下存在菜品，无法删除");
+        }
+        FoodClassify foodClassify = new FoodClassify();
+        foodClassify.setId(id);
+        foodClassify.setOpenid(openid);
+        int result = foodClassifyDao.delete(foodClassify);
         if (result == 0) {
             throw new HandleException("分类不存在");
         }
@@ -123,6 +131,7 @@ public class FoodServiceImpl implements FoodService {
             FoodClassify foodClassify = new FoodClassify();
             foodClassify.setId(id);
             foodClassify.setClassify_sort(sort);
+            foodClassify.setOpenid(openid);
             int result = foodClassifyDao.updatePosition(foodClassify);
             if (result == 0) {
                 throw new HandleException("分类不存在");
@@ -189,6 +198,7 @@ public class FoodServiceImpl implements FoodService {
         FoodClassify foodClassify = new FoodClassify();
         foodClassify.setId(id);
         foodClassify.setClassify_name(name);
+        foodClassify.setOpenid(openid);
         if (foodClassifyDao.queryExistName(foodClassify) != 0) {
             throw new HandleException("分类名称已存在");
         }
@@ -199,9 +209,45 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    public List<Food> getFoodsByClassify(String openid, long id) {
-        List<Food> foods = foodDao.queryByClassify(id);
+    public List<Food> getFoods(String openid, String ids, int status, int page, int count) throws HandleException {
+        List<Food> foods;
+        PageQuery pageQuery = new PageQuery();
+        pageQuery.setCount(count);
+        pageQuery.setStart(page * count);
+        pageQuery.setString_param(openid);
+        pageQuery.setInt_param(status);
+        List<Long> longList = JSON.parseObject(ids, List.class);
+        if(longList == null || longList.size() == 0){
+            throw new HandleException("所选分类不能为空");
+        }
+        if(longList.contains(0)){
+            foods = foodDao.queryAll(pageQuery);
+        }else {
+            pageQuery.setLongList(longList);
+            foods = foodDao.queryByClassify(pageQuery);
+        }
         return foods == null ? new ArrayList<>() : foods;
+    }
+
+    @Override
+    @Transactional
+    public void foodStatusChange(String openid, String ids, int status) throws HandleException {
+        if (status != 0 && status != 1) {
+            throw new HandleException("不支持的操作方式");
+        }
+        if (ids == null || ids.equals("")) {
+            throw new HandleException("菜品不能为空");
+        }
+        for (String id : ids.split(",")) {
+            Food food = new Food();
+            food.setId(Long.parseLong(id));
+            food.setStatus(status);
+            food.setOpenid(openid);
+            if (foodDao.queryExistId(food) == 0) {
+                throw new HandleException("菜品不存在");
+            }
+            foodDao.updateStatus(food);
+        }
     }
 
 }

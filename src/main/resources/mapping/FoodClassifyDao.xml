@@ -11,8 +11,8 @@
      WHERE openid = #{openid} ORDER BY classify_sort;
     </select>
 
-    <delete id="delete" parameterType="java.lang.Long">
-        DELETE FROM FOOD_CLASSIFY WHERE id = #{id}
+    <delete id="delete" parameterType="cwh.order.producer.model.FoodClassify">
+        DELETE FROM FOOD_CLASSIFY WHERE id = #{id} AND openid = #{openid}
     </delete>
 
     <select id="queryExistName" parameterType="cwh.order.producer.model.FoodClassify" resultType="java.lang.Integer">
@@ -20,7 +20,7 @@
     </select>
 
     <select id="queryExistId" parameterType="cwh.order.producer.model.FoodClassify" resultType="java.lang.Integer">
-        SELECT count(0) FROM FOOD_CLASSIFY WHERE id = #{id} AND  openid = #{openid}
+        SELECT count(0) FROM FOOD_CLASSIFY WHERE id = #{id} AND openid = #{openid}
     </select>
 
     <select id="queryMaxSort" parameterType="java.lang.String" resultType="java.lang.Integer">
@@ -28,10 +28,10 @@
     </select>
 
     <update id="updatePosition" parameterType="cwh.order.producer.model.FoodClassify">
-        UPDATE FOOD_CLASSIFY SET classify_sort = #{classify_sort} WHERE id = #{id}
+        UPDATE FOOD_CLASSIFY SET classify_sort = #{classify_sort} WHERE id = #{id} AND openid = #{openid}
     </update>
 
     <update id="updateName" parameterType="cwh.order.producer.model.FoodClassify">
-        UPDATE FOOD_CLASSIFY SET classify_name = #{classify_name} WHERE id = #{id}
+        UPDATE FOOD_CLASSIFY SET classify_name = #{classify_name} WHERE id = #{id} AND openid = #{openid}
     </update>
 </mapper>

@@ -1,6 +1,7 @@
 package cwh.order.producer.dao;
 
 import cwh.order.producer.model.Food;
+import cwh.order.producer.util.PageQuery;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,7 +15,15 @@ public interface FoodDao {
 
     void insert(Food food);
 
-    List<Food> queryByClassify(long classify_id);
+    List<Food> queryByClassify(PageQuery pageQuery);
 
-    int queryExistFoodName(Map<String,String> map);
+    int queryCountByClassify(long classify_id);
+
+    int queryExistName(Map<String,String> map);
+
+    void updateStatus(Food food);
+
+    int queryExistId(Food food);
+
+    List<Food> queryAll(PageQuery pageQuery);
 }

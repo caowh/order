@@ -20,5 +20,7 @@ public class Food {
 
     private int monthly_sale;
     private int praise_count;
+    private String classify_name;
+    private String openid;
 
 }

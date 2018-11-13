@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by 曹文豪 on 2018/10/30.
@@ -26,6 +25,8 @@ public interface FoodService {
 
     void updateClassifyName(String openid, long id, String name) throws HandleException;
 
-    List<Food> getFoodsByClassify(String openid, long id);
+    List<Food> getFoods(String openid, String ids, int status, int page, int count) throws HandleException;
+
+    void foodStatusChange(String openid, String ids, int status) throws HandleException;
 
 }

@@ -119,15 +119,39 @@ public class FoodController {
         return map;
     }
 
-    @GetMapping("getFoodsByClassify")
-    public Map<String, Object> getFoodsByClassify(HttpServletRequest request) {
+    @PostMapping("getFoods")
+    public Map<String, Object> getFoods(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
-        long id = Long.parseLong(getSafeParameter(request, "id"));
-        map.put("message", foodService.getFoodsByClassify(openid, id));
-        map.put("status", Constant.CODE_OK);
+        int status = Integer.parseInt(getSafeParameter(request, "status"));
+        String ids = getSafeParameter(request, "ids");
+        int page = Integer.parseInt(getSafeParameter(request, "page"));
+        int count = Integer.parseInt(getSafeParameter(request, "count"));
+        try {
+            map.put("message", foodService.getFoods(openid, ids, status, page, count));
+            map.put("status", Constant.CODE_OK);
+        } catch (HandleException e) {
+            map.put("status", Constant.CODE_ERROR);
+            map.put("error_message", e.getMessage());
+        }
+
         return map;
     }
 
+    @PostMapping("updateFoodStatus")
+    public Map<String, Object> updateFoodStatus(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        int status = Integer.parseInt(getSafeParameter(request, "status"));
+        String ids = getSafeParameter(request, "ids");
+        try {
+            foodService.foodStatusChange(openid, ids, status);
+            map.put("status", Constant.CODE_OK);
+        } catch (HandleException e) {
+            map.put("status", Constant.CODE_ERROR);
+            map.put("error_message", e.getMessage());
+        }
+        return map;
+    }
 
 }

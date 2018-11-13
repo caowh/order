@@ -14,7 +14,7 @@ public interface FoodClassifyDao {
 
     void insert(FoodClassify foodClassify);
 
-    int delete(long id);
+    int delete(FoodClassify foodClassify);
 
     List<FoodClassify> queryAll(String openid);
 
