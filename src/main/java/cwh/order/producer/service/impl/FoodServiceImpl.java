@@ -209,20 +209,21 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    public List<Food> getFoods(String openid, String ids, int status, int page, int count) throws HandleException {
+    public List<Food> getFoods(String openid, String name, String ids, int status, int page, int count) throws HandleException {
         List<Food> foods;
         PageQuery pageQuery = new PageQuery();
         pageQuery.setCount(count);
         pageQuery.setStart(page * count);
         pageQuery.setString_param(openid);
         pageQuery.setInt_param(status);
+        pageQuery.setString_param1("%" + name + "%");
         List<Long> longList = JSON.parseObject(ids, List.class);
-        if(longList == null || longList.size() == 0){
+        if (longList == null || longList.size() == 0) {
             throw new HandleException("所选分类不能为空");
         }
-        if(longList.contains(0)){
+        if (longList.contains(0)) {
             foods = foodDao.queryAll(pageQuery);
-        }else {
+        } else {
             pageQuery.setLongList(longList);
             foods = foodDao.queryByClassify(pageQuery);
         }

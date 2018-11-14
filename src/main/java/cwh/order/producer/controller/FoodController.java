@@ -125,10 +125,11 @@ public class FoodController {
         String openid = request.getAttribute("openid").toString();
         int status = Integer.parseInt(getSafeParameter(request, "status"));
         String ids = getSafeParameter(request, "ids");
+        String name = getSafeParameter(request, "name");
         int page = Integer.parseInt(getSafeParameter(request, "page"));
         int count = Integer.parseInt(getSafeParameter(request, "count"));
         try {
-            map.put("message", foodService.getFoods(openid, ids, status, page, count));
+            map.put("message", foodService.getFoods(openid, name, ids, status, page, count));
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);

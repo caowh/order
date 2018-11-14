@@ -9,6 +9,9 @@
     <select id="queryByClassify" parameterType="cwh.order.producer.util.PageQuery" resultType="cwh.order.producer.model.Food">
         SELECT f.id,f.f_name,f.description,f.price,f.status,f.picture_url,fc.classify_name
         FROM FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id WHERE
+        <if test="string_param1 != '%%'">
+          f.f_name LIKE #{string_param1} AND
+        </if>
         <foreach collection="longList" open="(" close=")" separator="OR" item="id">
             fc.id = #{id,jdbcType=BIGINT}
         </foreach>
@@ -21,7 +24,11 @@
 
     <select id="queryAll" parameterType="cwh.order.producer.util.PageQuery" resultType="cwh.order.producer.model.Food">
         SELECT f.id,f.f_name,f.description,f.price,f.status,f.picture_url,fc.classify_name
-        FROM FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id WHERE fc.openid = #{string_param}
+        FROM FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id WHERE
+        <if test="string_param1 != '%%'">
+            f.f_name LIKE #{string_param1} AND
+        </if>
+        fc.openid = #{string_param}
         <if test="int_param != 2">
             AND f.status = #{int_param}
         </if>

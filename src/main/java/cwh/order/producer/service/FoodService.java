@@ -25,7 +25,7 @@ public interface FoodService {
 
     void updateClassifyName(String openid, long id, String name) throws HandleException;
 
-    List<Food> getFoods(String openid, String ids, int status, int page, int count) throws HandleException;
+    List<Food> getFoods(String openid, String name, String ids, int status, int page, int count) throws HandleException;
 
     void foodStatusChange(String openid, String ids, int status) throws HandleException;
 
