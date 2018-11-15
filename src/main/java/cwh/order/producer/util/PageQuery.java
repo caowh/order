@@ -14,7 +14,7 @@ public class PageQuery {
     private String string_param;
     private String string_param1;
     private int int_param;
-    private List<Long> longList;
+    private List list;
     private int start;
     private int count;
 }

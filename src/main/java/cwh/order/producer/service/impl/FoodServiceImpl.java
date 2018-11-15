@@ -39,18 +39,12 @@ public class FoodServiceImpl implements FoodService {
 
     @Override
     @Transactional
-    public void add(String openid, String name, String description, BigDecimal price, long classifyId, MultipartFile file) throws HandleException {
+    public void add(String openid, String name, long classifyId) throws HandleException {
         if (name.equals("")) {
             throw new HandleException("名称不能为空");
         }
         if (name.length() > 20) {
             throw new HandleException("名称不能超过20个字符");
-        }
-        if (description.length() > 30) {
-            throw new HandleException("描述不能超过30个字符");
-        }
-        if (file == null) {
-            throw new HandleException("图片不能为空");
         }
         FoodClassify foodClassify = new FoodClassify();
         foodClassify.setId(classifyId);
@@ -65,17 +59,28 @@ public class FoodServiceImpl implements FoodService {
             throw new HandleException("菜品名称已存在");
         }
         Food food = new Food();
-        try {
-            food.setPicture_url(FileUtil.save(file));
-        } catch (IOException e) {
-            logger.error("upload food picture IOException,openid is {},food is {},file is {}", openid, name, file.getOriginalFilename());
-            throw new HandleException(Constant.ERROR);
-        }
         food.setF_name(name);
-        food.setDescription(description);
-        food.setPrice(price);
         food.setClassify_id(classifyId);
         foodDao.insert(food);
+    }
+
+    @Override
+    @Transactional
+    public void delete(String openid, String ids) throws HandleException {
+        if (ids == null || ids.equals("")) {
+            throw new HandleException("菜品不能为空");
+        }
+        List list = JSON.parseObject(ids, List.class);
+        for (Object id : list) {
+            Food food = new Food();
+            food.setOpenid(openid);
+            food.setId(Long.parseLong(id.toString()));
+            food.setStatus(-1);
+            int result = foodDao.updateStatus(food);
+            if (result == 0) {
+                throw new HandleException("有菜品未处于待售状态，无法删除");
+            }
+        }
     }
 
     @Override
@@ -217,14 +222,14 @@ public class FoodServiceImpl implements FoodService {
         pageQuery.setString_param(openid);
         pageQuery.setInt_param(status);
         pageQuery.setString_param1("%" + name + "%");
-        List<Long> longList = JSON.parseObject(ids, List.class);
-        if (longList == null || longList.size() == 0) {
+        List list = JSON.parseObject(ids, List.class);
+        if (list == null || list.size() == 0) {
             throw new HandleException("所选分类不能为空");
         }
-        if (longList.contains(0)) {
+        if (list.contains(0)) {
             foods = foodDao.queryAll(pageQuery);
         } else {
-            pageQuery.setLongList(longList);
+            pageQuery.setList(list);
             foods = foodDao.queryByClassify(pageQuery);
         }
         return foods == null ? new ArrayList<>() : foods;
@@ -239,15 +244,112 @@ public class FoodServiceImpl implements FoodService {
         if (ids == null || ids.equals("")) {
             throw new HandleException("菜品不能为空");
         }
-        for (String id : ids.split(",")) {
+        List longList = JSON.parseObject(ids, List.class);
+        for (Object id : longList) {
             Food food = new Food();
-            food.setId(Long.parseLong(id));
+            food.setId(Long.parseLong(id.toString()));
             food.setStatus(status);
             food.setOpenid(openid);
-            if (foodDao.queryExistId(food) == 0) {
+            int result = foodDao.updateStatus(food);
+            if (result == 0) {
                 throw new HandleException("菜品不存在");
             }
-            foodDao.updateStatus(food);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void updateName(String openid, long id, String name) throws HandleException {
+        if (name.equals("")) {
+            throw new HandleException("名称不能为空");
+        }
+        if (name.length() > 20) {
+            throw new HandleException("名称不能超过20个字符");
+        }
+        Map<String, String> map = new HashMap<>();
+        map.put("openid", openid);
+        map.put("name", name);
+        if (foodDao.queryExistName(map) != 0) {
+            throw new HandleException("菜品名称已存在");
+        }
+        Food food = new Food();
+        food.setId(id);
+        food.setOpenid(openid);
+        food.setF_name(name);
+        int result = foodDao.updateName(food);
+        if (result == 0) {
+            throw new HandleException("菜品不存在");
+        }
+    }
+
+    @Override
+    public void updateDescription(String openid, long id, String description) throws HandleException {
+        if (description.length() > 30) {
+            throw new HandleException("描述不能超过30个字符");
+        }
+        Food food = new Food();
+        food.setId(id);
+        food.setOpenid(openid);
+        food.setDescription(description);
+        int result = foodDao.updateDescription(food);
+        if (result == 0) {
+            throw new HandleException("菜品不存在");
+        }
+    }
+
+    @Override
+    public void updatePrice(String openid, long id, BigDecimal price) throws HandleException {
+        if (price.compareTo(new BigDecimal(0)) <= 0) {
+            throw new HandleException("菜品价格必须大于0");
+        }
+        Food food = new Food();
+        food.setId(id);
+        food.setOpenid(openid);
+        food.setPrice(price);
+        int result = foodDao.updatePrice(food);
+        if (result == 0) {
+            throw new HandleException("菜品不存在");
+        }
+    }
+
+    @Override
+    public void updatePicture(String openid, long id, MultipartFile file) throws HandleException {
+        if (file == null) {
+            throw new HandleException("图片不能为空");
+        }
+        String url;
+        try {
+            url = FileUtil.save(file);
+        } catch (IOException e) {
+            logger.error("upload food picture IOException,openid is {},food id is {},file is {}", openid, id, file.getOriginalFilename());
+            throw new HandleException(Constant.ERROR);
+        }
+        Food food = new Food();
+        food.setId(id);
+        food.setOpenid(openid);
+        food.setPicture_url(url);
+        int result = foodDao.updatePicture(food);
+        if (result == 0) {
+            throw new HandleException("菜品不存在");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void updateClassify(String openid, long id, long classifyId) throws HandleException {
+        FoodClassify foodClassify = new FoodClassify();
+        foodClassify.setId(classifyId);
+        foodClassify.setOpenid(openid);
+        if (foodClassifyDao.queryExistId(foodClassify) == 0) {
+            throw new HandleException("分类不存在");
+        }
+        Food food = new Food();
+        food.setId(id);
+        food.setOpenid(openid);
+        food.setClassify_id(classifyId);
+        int result = foodDao.updateClassify(food);
+        if (result == 0) {
+            throw new HandleException("菜品不存在");
         }
     }
 

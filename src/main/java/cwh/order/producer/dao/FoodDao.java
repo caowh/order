@@ -19,11 +19,21 @@ public interface FoodDao {
 
     int queryCountByClassify(long classify_id);
 
-    int queryExistName(Map<String,String> map);
+    int queryExistName(Map<String, String> map);
 
-    void updateStatus(Food food);
-
-    int queryExistId(Food food);
+    int updateStatus(Food food);
 
     List<Food> queryAll(PageQuery pageQuery);
+
+    int delete(Food food);
+
+    int updateName(Food food);
+
+    int updateDescription(Food food);
+
+    int updatePrice(Food food);
+
+    int updatePicture(Food food);
+
+    int updateClassify(Food food);
 }

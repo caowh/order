@@ -13,7 +13,9 @@ import java.util.List;
  */
 public interface FoodService {
 
-    void add(String openid, String name, String description, BigDecimal price, long classifyId, MultipartFile file) throws HandleException;
+    void add(String openid, String name, long classifyId) throws HandleException;
+
+    void delete(String openid, String ids) throws HandleException;
 
     void addFoodClassify(String openid, String name) throws HandleException;
 
@@ -29,4 +31,13 @@ public interface FoodService {
 
     void foodStatusChange(String openid, String ids, int status) throws HandleException;
 
+    void updateName(String openid, long id, String name) throws HandleException;
+
+    void updateDescription(String openid, long id, String description) throws HandleException;
+
+    void updatePrice(String openid, long id, BigDecimal price) throws HandleException;
+
+    void updatePicture(String openid, long id, MultipartFile file) throws HandleException;
+
+    void updateClassify(String openid, long id, long classifyId) throws HandleException;
 }
