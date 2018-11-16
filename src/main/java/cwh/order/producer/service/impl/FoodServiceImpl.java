@@ -39,12 +39,18 @@ public class FoodServiceImpl implements FoodService {
 
     @Override
     @Transactional
-    public void add(String openid, String name, long classifyId) throws HandleException {
+    public void add(String openid, String name, String description, BigDecimal price, long classifyId, MultipartFile file) throws HandleException {
         if (name.equals("")) {
             throw new HandleException("名称不能为空");
         }
         if (name.length() > 20) {
             throw new HandleException("名称不能超过20个字符");
+        }
+        if (description.length() > 30) {
+            throw new HandleException("描述不能超过30个字符");
+        }
+        if (file == null) {
+            throw new HandleException("图片不能为空");
         }
         FoodClassify foodClassify = new FoodClassify();
         foodClassify.setId(classifyId);
@@ -59,7 +65,15 @@ public class FoodServiceImpl implements FoodService {
             throw new HandleException("菜品名称已存在");
         }
         Food food = new Food();
+        try {
+            food.setPicture_url(FileUtil.save(file));
+        } catch (IOException e) {
+            logger.error("upload food picture IOException,openid is {},food is {},file is {}", openid, name, file.getOriginalFilename());
+            throw new HandleException(Constant.ERROR);
+        }
         food.setF_name(name);
+        food.setDescription(description);
+        food.setPrice(price.setScale(2, BigDecimal.ROUND_HALF_UP));
         food.setClassify_id(classifyId);
         foodDao.insert(food);
     }
@@ -305,7 +319,7 @@ public class FoodServiceImpl implements FoodService {
         Food food = new Food();
         food.setId(id);
         food.setOpenid(openid);
-        food.setPrice(price);
+        food.setPrice(price.setScale(2, BigDecimal.ROUND_HALF_UP));
         int result = foodDao.updatePrice(food);
         if (result == 0) {
             throw new HandleException("菜品不存在");

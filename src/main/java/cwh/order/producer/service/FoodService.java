@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface FoodService {
 
-    void add(String openid, String name, long classifyId) throws HandleException;
+    void add(String openid, String name, String description, BigDecimal price, long classifyId, MultipartFile file) throws HandleException;
 
     void delete(String openid, String ids) throws HandleException;
 

@@ -34,9 +34,13 @@ public class FoodController {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
         String name = getSafeParameter(request, "name");
+        String description = getSafeParameter(request, "description");
         long classifyId = Long.parseLong(getSafeParameter(request, "classifyId"));
+        BigDecimal price = new BigDecimal(getSafeParameter(request, "price"));
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        MultipartFile file = multipartRequest.getFile("foodPicture");
         try {
-            foodService.add(openid, name, classifyId);
+            foodService.add(openid, name, description, price, classifyId, file);
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
             map.put("status", Constant.CODE_ERROR);
