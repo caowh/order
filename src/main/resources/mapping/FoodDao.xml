@@ -6,12 +6,13 @@
       INSERT INTO FOOD(f_name,description,price,classify_id,picture_url) VALUES (#{f_name},#{description},#{price},#{classify_id},#{picture_url});
     </insert>
 
-    <select id="queryByClassify" parameterType="cwh.order.producer.util.PageQuery" resultType="cwh.order.producer.model.Food">
-        SELECT f.id,f.f_name,f.description,f.price,f.status,f.picture_url,fc.classify_name
+    <select id="queryByClassify" parameterType="cwh.order.producer.util.PageQuery"
+            resultType="cwh.order.producer.model.Food">
+        SELECT f.id,f.f_name,f.description,f.price,f.status,f.classify_id,f.picture_url,fc.classify_name
         FROM FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id WHERE
-        fc.openid = #{string_param}  AND f.status != -1 AND
+        fc.openid = #{string_param} AND
         <if test="string_param1 != '%%'">
-          f.f_name LIKE #{string_param1} AND
+            f.f_name LIKE #{string_param1} AND
         </if>
         <foreach collection="list" open="(" close=")" separator="OR" item="id">
             fc.id = #{id,jdbcType=BIGINT}
@@ -23,9 +24,9 @@
     </select>
 
     <select id="queryAll" parameterType="cwh.order.producer.util.PageQuery" resultType="cwh.order.producer.model.Food">
-        SELECT f.id,f.f_name,f.description,f.price,f.status,f.picture_url,fc.classify_name
+        SELECT f.id,f.f_name,f.description,f.price,f.status,f.classify_id,f.picture_url,fc.classify_name
         FROM FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id WHERE
-        fc.openid = #{string_param} AND f.status != -1
+        fc.openid = #{string_param}
         <if test="string_param1 != '%%'">
             AND f.f_name LIKE #{string_param1}
         </if>
@@ -33,6 +34,12 @@
             AND f.status = #{int_param}
         </if>
         ORDER BY f.id DESC limit #{start},#{count};
+    </select>
+
+    <select id="queryOne" parameterType="cwh.order.producer.model.Food" resultType="cwh.order.producer.model.Food">
+        SELECT f.id,f.f_name,f.description,f.price,f.status,f.classify_id,f.picture_url,fc.classify_name
+        FROM FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id
+        WHERE fc.openid = #{openid} AND f.id = #{id}
     </select>
 
     <select id="queryExistName" parameterType="java.util.Map" resultType="java.lang.Integer">
@@ -48,26 +55,31 @@
     </update>
 
     <delete id="delete" parameterType="cwh.order.producer.model.Food">
-        DELETE f FROM FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id WHERE f.id = #{id} AND fc.openid=#{openid} AND f.status=0
+        DELETE f FROM FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id WHERE f.id = #{id} AND fc.openid=#{openid}
     </delete>
 
     <update id="updateName" parameterType="cwh.order.producer.model.Food">
-        UPDATE FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id SET f.f_name = #{f_name} WHERE f.id = #{id} AND fc.openid=#{openid};
+        UPDATE FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id SET f.f_name = #{f_name}
+        WHERE f.id = #{id} AND fc.openid=#{openid} AND f.status = 0;
     </update>
 
     <update id="updateDescription" parameterType="cwh.order.producer.model.Food">
-        UPDATE FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id SET f.description = #{description} WHERE f.id = #{id} AND fc.openid=#{openid};
+        UPDATE FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id SET f.description = #{description}
+        WHERE f.id = #{id} AND fc.openid=#{openid} AND f.status = 0;
     </update>
 
     <update id="updatePrice" parameterType="cwh.order.producer.model.Food">
-        UPDATE FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id SET f.price = #{price} WHERE f.id = #{id} AND fc.openid=#{openid};
+        UPDATE FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id SET f.price = #{price}
+        WHERE f.id = #{id} AND fc.openid=#{openid} AND f.status = 0;
     </update>
 
     <update id="updatePicture" parameterType="cwh.order.producer.model.Food">
-        UPDATE FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id SET f.picture_url = #{picture_url} WHERE f.id = #{id} AND fc.openid=#{openid};
+        UPDATE FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id SET f.picture_url = #{picture_url}
+        WHERE f.id = #{id} AND fc.openid=#{openid} AND f.status = 0;
     </update>
 
     <update id="updateClassify" parameterType="cwh.order.producer.model.Food">
-        UPDATE FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id SET f.classify_id = #{classify_id} WHERE f.id = #{id} AND fc.openid=#{openid};
+        UPDATE FOOD f JOIN FOOD_CLASSIFY fc ON fc.id = f.classify_id SET f.classify_id = #{classify_id}
+        WHERE f.id = #{id} AND fc.openid=#{openid} AND f.status = 0;
     </update>
 </mapper>

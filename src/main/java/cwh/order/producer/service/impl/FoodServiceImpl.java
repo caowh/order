@@ -3,8 +3,12 @@ package cwh.order.producer.service.impl;
 import com.alibaba.fastjson.JSON;
 import cwh.order.producer.dao.FoodClassifyDao;
 import cwh.order.producer.dao.FoodDao;
+import cwh.order.producer.dao.FoodDeleteDao;
+import cwh.order.producer.dao.FoodTableDao;
 import cwh.order.producer.model.Food;
 import cwh.order.producer.model.FoodClassify;
+import cwh.order.producer.model.FoodDelete;
+import cwh.order.producer.model.FoodTable;
 import cwh.order.producer.service.FoodService;
 import cwh.order.producer.util.Constant;
 import cwh.order.producer.util.FileUtil;
@@ -19,10 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -36,6 +37,10 @@ public class FoodServiceImpl implements FoodService {
     private FoodDao foodDao;
     @Resource
     private FoodClassifyDao foodClassifyDao;
+    @Resource
+    private FoodDeleteDao foodDeleteDao;
+    @Resource
+    private FoodTableDao foodTableDao;
 
     @Override
     @Transactional
@@ -89,10 +94,22 @@ public class FoodServiceImpl implements FoodService {
             Food food = new Food();
             food.setOpenid(openid);
             food.setId(Long.parseLong(id.toString()));
-            food.setStatus(-1);
-            int result = foodDao.updateStatus(food);
-            if (result == 0) {
-                throw new HandleException("有菜品未处于待售状态，无法删除");
+            Food queryFood = foodDao.queryOne(food);
+            if (queryFood != null) {
+                if (queryFood.getStatus() == 1) {
+                    throw new HandleException("菜品“" + queryFood.getF_name() + "”处于在售状态，无法删除");
+                }
+                foodDao.delete(food);
+                FoodDelete foodDelete = new FoodDelete();
+                foodDelete.setId(queryFood.getId());
+                foodDelete.setOpenid(openid);
+                foodDelete.setDescription(queryFood.getDescription());
+                foodDelete.setPicture_url(queryFood.getPicture_url());
+                foodDelete.setClassify_name(queryFood.getClassify_name());
+                foodDelete.setPrice(queryFood.getPrice());
+                foodDelete.setF_name(queryFood.getF_name());
+                foodDelete.setDelete_time(new Date());
+                foodDeleteDao.insert(foodDelete);
             }
         }
     }
@@ -292,7 +309,7 @@ public class FoodServiceImpl implements FoodService {
         food.setF_name(name);
         int result = foodDao.updateName(food);
         if (result == 0) {
-            throw new HandleException("菜品不存在");
+            throw new HandleException("处于在售状态，无法编辑");
         }
     }
 
@@ -307,7 +324,7 @@ public class FoodServiceImpl implements FoodService {
         food.setDescription(description);
         int result = foodDao.updateDescription(food);
         if (result == 0) {
-            throw new HandleException("菜品不存在");
+            throw new HandleException("处于在售状态，无法编辑");
         }
     }
 
@@ -322,7 +339,7 @@ public class FoodServiceImpl implements FoodService {
         food.setPrice(price.setScale(2, BigDecimal.ROUND_HALF_UP));
         int result = foodDao.updatePrice(food);
         if (result == 0) {
-            throw new HandleException("菜品不存在");
+            throw new HandleException("处于在售状态，无法编辑");
         }
     }
 
@@ -344,7 +361,7 @@ public class FoodServiceImpl implements FoodService {
         food.setPicture_url(url);
         int result = foodDao.updatePicture(food);
         if (result == 0) {
-            throw new HandleException("菜品不存在");
+            throw new HandleException("处于在售状态，无法编辑");
         }
     }
 
@@ -363,7 +380,30 @@ public class FoodServiceImpl implements FoodService {
         food.setClassify_id(classifyId);
         int result = foodDao.updateClassify(food);
         if (result == 0) {
-            throw new HandleException("菜品不存在");
+            throw new HandleException("处于在售状态，无法编辑");
+        }
+    }
+
+    @Override
+    public List<FoodTable> getFoodTables(String openid) {
+        return foodTableDao.queryAll(openid);
+    }
+
+    @Override
+    public void updateTableName(String openid, long id, String name) throws HandleException {
+        if(name.equals("")){
+            throw new HandleException("名称不能为空");
+        }
+        if(name.length() > 10){
+            throw new HandleException("名称不能超过10个字符");
+        }
+        FoodTable foodTable=new FoodTable();
+        foodTable.setId(id);
+        foodTable.setOpenid(openid);
+        foodTable.setT_name(name);
+        int result = foodTableDao.updateName(foodTable);
+        if(result == 0){
+            throw new HandleException("此餐桌不存在");
         }
     }
 

@@ -36,10 +36,15 @@ public class FoodController {
         String name = getSafeParameter(request, "name");
         String description = getSafeParameter(request, "description");
         long classifyId = Long.parseLong(getSafeParameter(request, "classifyId"));
-        BigDecimal price = new BigDecimal(getSafeParameter(request, "price"));
+        BigDecimal price;
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         MultipartFile file = multipartRequest.getFile("foodPicture");
         try {
+            try {
+                price = new BigDecimal(getSafeParameter(request, "price"));
+            } catch (NumberFormatException e) {
+                throw new HandleException("价格格式输入错误");
+            }
             foodService.add(openid, name, description, price, classifyId, file);
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {
@@ -70,6 +75,31 @@ public class FoodController {
         String openid = request.getAttribute("openid").toString();
         map.put("message", foodService.getFoodClassifies(openid));
         map.put("status", Constant.CODE_OK);
+        return map;
+    }
+
+    @GetMapping("getFoodTables")
+    public Map<String, Object> getFoodTables(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        map.put("message", foodService.getFoodTables(openid));
+        map.put("status", Constant.CODE_OK);
+        return map;
+    }
+
+    @PostMapping("updateTableName")
+    public Map<String, Object> updateTableName(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String openid = request.getAttribute("openid").toString();
+        long id = Long.parseLong(getSafeParameter(request, "id"));
+        String name = getSafeParameter(request, "name");
+        try {
+            foodService.updateTableName(openid, id, name);
+            map.put("status", Constant.CODE_OK);
+        } catch (HandleException e) {
+            map.put("status", Constant.CODE_ERROR);
+            map.put("error_message", e.getMessage());
+        }
         return map;
     }
 
@@ -207,8 +237,13 @@ public class FoodController {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
         long id = Long.parseLong(getSafeParameter(request, "id"));
-        BigDecimal price = new BigDecimal(getSafeParameter(request, "price"));
+        BigDecimal price;
         try {
+            try {
+                price = new BigDecimal(getSafeParameter(request, "price"));
+            } catch (NumberFormatException e) {
+                throw new HandleException("价格格式输入错误");
+            }
             foodService.updatePrice(openid, id, price);
             map.put("status", Constant.CODE_OK);
         } catch (HandleException e) {

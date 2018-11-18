@@ -2,6 +2,7 @@ package cwh.order.producer.service;
 
 import cwh.order.producer.model.Food;
 import cwh.order.producer.model.FoodClassify;
+import cwh.order.producer.model.FoodTable;
 import cwh.order.producer.util.HandleException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,4 +41,8 @@ public interface FoodService {
     void updatePicture(String openid, long id, MultipartFile file) throws HandleException;
 
     void updateClassify(String openid, long id, long classifyId) throws HandleException;
+
+    List<FoodTable> getFoodTables(String openid);
+
+    void updateTableName(String openid, long id, String name) throws HandleException;
 }

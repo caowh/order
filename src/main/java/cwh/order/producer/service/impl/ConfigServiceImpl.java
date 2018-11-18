@@ -10,6 +10,7 @@ import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import cwh.order.producer.dao.DAANDao;
+import cwh.order.producer.dao.FoodTableDao;
 import cwh.order.producer.dao.SellUserDao;
 import cwh.order.producer.dao.StorePictureDao;
 import cwh.order.producer.model.DAAN;
@@ -47,6 +48,8 @@ public class ConfigServiceImpl implements ConfigService {
     private SellUserDao sellUserDao;
     @Resource
     private StorePictureDao storePictureDao;
+    @Resource
+    private FoodTableDao foodTableDao;
     @Resource
     private DAANDao daanDao;
 
@@ -286,6 +289,8 @@ public class ConfigServiceImpl implements ConfigService {
         approvalMap.put("status", approval);
         if (approval == 3) {
             approvalMap.put("reason", sellUserDao.getApprovalMsg(openid));
+        } else if (approval == 2) {
+            map.put("table", foodTableDao.queryCount(openid));
         }
         map.put("approval", approvalMap);
         map.put("business", sellUserDao.getBusiness(openid) == 1);

@@ -25,6 +25,8 @@ public interface FoodDao {
 
     List<Food> queryAll(PageQuery pageQuery);
 
+    Food queryOne(Food food);
+
     int delete(Food food);
 
     int updateName(Food food);
