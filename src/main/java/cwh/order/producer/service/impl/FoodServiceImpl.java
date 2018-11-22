@@ -10,10 +10,7 @@ import cwh.order.producer.model.FoodClassify;
 import cwh.order.producer.model.FoodDelete;
 import cwh.order.producer.model.FoodTable;
 import cwh.order.producer.service.FoodService;
-import cwh.order.producer.util.Constant;
-import cwh.order.producer.util.FileUtil;
-import cwh.order.producer.util.HandleException;
-import cwh.order.producer.util.PageQuery;
+import cwh.order.producer.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -41,6 +38,8 @@ public class FoodServiceImpl implements FoodService {
     private FoodDeleteDao foodDeleteDao;
     @Resource
     private FoodTableDao foodTableDao;
+    @Resource
+    private IdWorker idWorker;
 
     @Override
     @Transactional
@@ -80,6 +79,7 @@ public class FoodServiceImpl implements FoodService {
         food.setDescription(description);
         food.setPrice(price.setScale(2, BigDecimal.ROUND_HALF_UP));
         food.setClassify_id(classifyId);
+        food.setId(idWorker.nextId());
         foodDao.insert(food);
     }
 
@@ -130,6 +130,7 @@ public class FoodServiceImpl implements FoodService {
             throw new HandleException("分类名称已存在");
         }
         foodClassify.setClassify_sort(foodClassifyDao.queryMaxSort(openid) + 1);
+        foodClassify.setId(idWorker.nextId());
         foodClassifyDao.insert(foodClassify);
     }
 

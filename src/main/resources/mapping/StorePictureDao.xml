@@ -3,7 +3,7 @@
 <mapper namespace="cwh.order.producer.dao.StorePictureDao">
 
     <insert id="insert" parameterType="cwh.order.producer.model.StorePicture">
-      INSERT INTO STORE_PICTURE(openid,pic_url) VALUES (#{openid},#{pic_url});
+      INSERT INTO STORE_PICTURE(id,openid,pic_url) VALUES (#{id},#{openid},#{pic_url});
     </insert>
 
     <select id="getStorePictureUrls" parameterType="java.lang.String" resultType="java.lang.String">

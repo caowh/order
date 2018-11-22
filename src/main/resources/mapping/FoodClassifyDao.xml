@@ -3,7 +3,7 @@
 <mapper namespace="cwh.order.producer.dao.FoodClassifyDao">
 
     <insert id="insert" parameterType="cwh.order.producer.model.FoodClassify">
-      INSERT INTO FOOD_CLASSIFY(openid,classify_name,classify_sort) VALUES (#{openid},#{classify_name},#{classify_sort});
+      INSERT INTO FOOD_CLASSIFY(id,openid,classify_name,classify_sort) VALUES (#{id},#{openid},#{classify_name},#{classify_sort});
     </insert>
 
     <select id="queryAll" parameterType="java.lang.String" resultType="cwh.order.producer.model.FoodClassify">

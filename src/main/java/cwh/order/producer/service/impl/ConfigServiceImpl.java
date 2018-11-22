@@ -20,6 +20,7 @@ import cwh.order.producer.service.ConfigService;
 import cwh.order.producer.util.Constant;
 import cwh.order.producer.util.FileUtil;
 import cwh.order.producer.util.HandleException;
+import cwh.order.producer.util.IdWorker;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,8 @@ public class ConfigServiceImpl implements ConfigService {
     private FoodTableDao foodTableDao;
     @Resource
     private DAANDao daanDao;
+    @Resource
+    private IdWorker idWorker;
 
     @Override
     public String getToken(String code, String appid) throws HandleException {
@@ -396,6 +399,7 @@ public class ConfigServiceImpl implements ConfigService {
             throw new HandleException(Constant.ERROR);
         }
         storePicture.setOpenid(openid);
+        storePicture.setId(idWorker.nextId());
         storePictureDao.insert(storePicture);
     }
 

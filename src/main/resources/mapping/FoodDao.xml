@@ -3,7 +3,7 @@
 <mapper namespace="cwh.order.producer.dao.FoodDao">
 
     <insert id="insert" parameterType="cwh.order.producer.model.Food">
-      INSERT INTO FOOD(f_name,description,price,classify_id,picture_url) VALUES (#{f_name},#{description},#{price},#{classify_id},#{picture_url});
+      INSERT INTO FOOD(id,f_name,description,price,classify_id,picture_url) VALUES (#{id},#{f_name},#{description},#{price},#{classify_id},#{picture_url});
     </insert>
 
     <select id="queryByClassify" parameterType="cwh.order.producer.util.PageQuery"
