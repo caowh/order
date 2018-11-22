@@ -1,5 +1,7 @@
 package cwh.order.producer.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 /**
@@ -8,6 +10,7 @@ import lombok.Data;
 @Data
 public class StorePicture {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private long id;
     private String openid;
     private String pic_url;
