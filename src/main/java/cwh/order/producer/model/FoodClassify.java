@@ -1,7 +1,5 @@
 package cwh.order.producer.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 /**
@@ -10,11 +8,9 @@ import lombok.Data;
 @Data
 public class FoodClassify {
 
-    @JsonSerialize(using = ToStringSerializer.class)
     private long id;
     private String classify_name;
     private String openid;
     private int classify_sort;
-
     private int food_count;
 }

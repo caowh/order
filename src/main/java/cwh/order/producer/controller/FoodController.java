@@ -200,21 +200,21 @@ public class FoodController {
         return map;
     }
 
-    @PostMapping("updateName")
-    public Map<String, Object> updateName(HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<>();
-        String openid = request.getAttribute("openid").toString();
-        long id = Long.parseLong(getSafeParameter(request, "id"));
-        String name = getSafeParameter(request, "name");
-        try {
-            foodService.updateName(openid, id, name);
-            map.put("status", Constant.CODE_OK);
-        } catch (HandleException e) {
-            map.put("status", Constant.CODE_ERROR);
-            map.put("error_message", e.getMessage());
-        }
-        return map;
-    }
+//    @PostMapping("updateName")
+//    public Map<String, Object> updateName(HttpServletRequest request) {
+//        Map<String, Object> map = new HashMap<>();
+//        String openid = request.getAttribute("openid").toString();
+//        long id = Long.parseLong(getSafeParameter(request, "id"));
+//        String name = getSafeParameter(request, "name");
+//        try {
+//            foodService.updateName(openid, id, name);
+//            map.put("status", Constant.CODE_OK);
+//        } catch (HandleException e) {
+//            map.put("status", Constant.CODE_ERROR);
+//            map.put("error_message", e.getMessage());
+//        }
+//        return map;
+//    }
 
     @PostMapping("updateDescription")
     public Map<String, Object> updateDescription(HttpServletRequest request) {
