@@ -42,7 +42,7 @@ public class FoodServiceImpl implements FoodService {
     private IdWorker idWorker;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public void add(String openid, String name, String description, BigDecimal price, long classifyId, MultipartFile file) throws HandleException {
         if (name.equals("")) {
             throw new HandleException("名称不能为空");
@@ -84,7 +84,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public void delete(String openid, String ids) throws HandleException {
         if (ids == null || ids.equals("")) {
             throw new HandleException("菜品不能为空");
@@ -115,7 +115,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public void addFoodClassify(String openid, String name) throws HandleException {
         if (name == null || name.equals("")) {
             throw new HandleException("分类名称不能为空");
@@ -135,7 +135,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public void deleteFoodClassify(String openid, long id) throws HandleException {
         if (foodDao.queryCountByClassify(id) > 0) {
             throw new HandleException("分类下存在菜品，无法删除");
@@ -156,7 +156,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    @Transactional(rollbackFor = {HandleException.class})
+    @Transactional(rollbackFor = HandleException.class)
     public void classifySort(String openid, String listStr) throws HandleException {
         List<Map> list = JSON.parseArray(listStr, Map.class);
         if (list == null || list.size() <= 1) {
@@ -227,7 +227,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public void updateClassifyName(String openid, long id, String name) throws HandleException {
         if (name.length() > 10) {
             throw new HandleException("分类名称不能超过10个字符");
@@ -268,7 +268,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public void foodStatusChange(String openid, String ids, int status) throws HandleException {
         if (status != 0 && status != 1) {
             throw new HandleException("不支持的操作方式");
@@ -290,7 +290,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public void updateName(String openid, long id, String name) throws HandleException {
         if (name.equals("")) {
             throw new HandleException("名称不能为空");
@@ -367,7 +367,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public void updateClassify(String openid, long id, long classifyId) throws HandleException {
         FoodClassify foodClassify = new FoodClassify();
         foodClassify.setId(classifyId);

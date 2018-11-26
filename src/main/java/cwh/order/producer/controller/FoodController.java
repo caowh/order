@@ -165,7 +165,6 @@ public class FoodController {
             map.put("status", Constant.CODE_ERROR);
             map.put("error_message", e.getMessage());
         }
-
         return map;
     }
 

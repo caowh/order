@@ -232,7 +232,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public int checkStoreNameByRegion(String openid, String name) throws HandleException {
         String region = checkStoreName(openid, name);
         SellUser sellUser = new SellUser();
@@ -241,7 +241,7 @@ public class ConfigServiceImpl implements ConfigService {
         return sellUserDao.queryNameCountByRegion(sellUser);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     private String checkStoreName(String openid, String name) throws HandleException {
         if (name == null || name.equals("")) {
             throw new HandleException("名称不能为空");
@@ -281,7 +281,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public Map<String, Object> getSettingStatus(String openid) {
         Map<String, Object> map = new HashMap<>();
         Boolean store = checkStore(openid);
@@ -336,7 +336,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public void configStoreName(String openid, String store_name) throws HandleException {
         checkStoreName(openid, store_name);
         SellUser sellUser = new SellUser();
@@ -360,7 +360,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public void configHeadPicture(String openid, MultipartFile file) throws HandleException {
         if (file == null) {
             throw new HandleException("头像不能为空");
@@ -383,7 +383,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public void configStorePicture(String openid, MultipartFile file) throws HandleException {
         if (file == null) {
             throw new HandleException("图片不能为空");
@@ -404,7 +404,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public void deleteStorePictures(String openid, String urls) throws HandleException {
         if (urls == null || urls.equals("")) {
             throw new HandleException("请至少选择一张图片");
@@ -422,7 +422,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = HandleException.class)
     public void initiateApproval(String openid) throws HandleException {
         if (!checkStore(openid)) {
             throw new HandleException("请先完善门店信息");
@@ -464,7 +464,7 @@ public class ConfigServiceImpl implements ConfigService {
         daanDao.insert(daan1);
     }
 
-    @Transactional(rollbackFor = {Exception.class})
+    @Transactional(rollbackFor = HandleException.class)
     private void bindingPhone(String openid, String phoneNumber) {
         String phone = sellUserDao.queryPhone(openid);
         SellUser sellUser = new SellUser();

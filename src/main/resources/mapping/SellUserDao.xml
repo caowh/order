@@ -52,7 +52,7 @@
     </select>
 
     <select id="getApproval" parameterType="java.lang.String" resultType="java.lang.Integer">
-        SELECT approval FROM SELL_USER WHERE openid = #{openid}
+        SELECT approval FROM SELL_USER WHERE openid = #{openid} FOR UPDATE
     </select>
 
     <update id="updateRegion" parameterType="cwh.order.producer.model.SellUser">
