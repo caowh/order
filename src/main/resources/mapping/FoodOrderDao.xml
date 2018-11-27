@@ -4,14 +4,16 @@
 
     <select id="query" parameterType="cwh.order.producer.util.PageQuery"
             resultType="cwh.order.producer.model.FoodOrder">
-        SELECT id,create_time,total_price,sort,table_id,t_name
+        SELECT id,create_time,total_price,sort,table_id,t_name,reason,
         FROM FOOD_ORDER WHERE store_id = #{string_param} AND status = #{int_param}
         ORDER BY create_time DESC limit #{start},#{count};
     </select>
 
     <select id="queryDetail" parameterType="cwh.order.producer.model.FoodOrder"
             resultType="cwh.order.producer.model.FoodOrder">
-        SELECT id,table_id,t_name,create_time,total_price,phone,message,sort,status FROM FOOD_ORDER
+        SELECT id,table_id,t_name,create_time,total_price,phone,message,sort,status,reason,
+        (SELECT COUNT(0) FROM ORDER_EVALUATE WHERE order_id = id) AS evaluate
+        FROM FOOD_ORDER
         WHERE id = #{id} AND store_id = #{store_id} AND status != 0
     </select>
 

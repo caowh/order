@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cwh.order.producer.dao.OrderEvaluateDao">
+
+    <select id="query" parameterType="cwh.order.producer.model.FoodOrder" resultType="cwh.order.producer.model.OrderEvaluate">
+        SELECT oe.order_id,oe.message,oe.evaluate_type,oe.create_time FROM ORDER_EVALUATE oe JOIN FOOD_ORDER fo ON oe.order_id = fo.id
+        WHERE fo.id = #{id} AND fo.store_id = #{openid}
+    </select>
+</mapper>

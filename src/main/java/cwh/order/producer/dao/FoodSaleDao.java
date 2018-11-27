@@ -13,4 +13,5 @@ public interface FoodSaleDao {
 
     List<FoodSale> queryByOrder(long id);
 
+    List<FoodSale> queryEvaluate(long id);
 }

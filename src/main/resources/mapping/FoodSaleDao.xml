@@ -6,4 +6,7 @@
         SELECT food_id,food_name,food_price,food_count FROM FOOD_SALE WHERE order_id = #{id}
     </select>
 
+    <select id="queryEvaluate" parameterType="java.lang.Long" resultType="cwh.order.producer.model.FoodSale">
+        SELECT food_id,food_name,praise FROM FOOD_SALE WHERE order_id = #{id}
+    </select>
 </mapper>

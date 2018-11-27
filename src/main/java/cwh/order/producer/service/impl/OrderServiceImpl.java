@@ -1,8 +1,11 @@
 package cwh.order.producer.service.impl;
 
+import cwh.order.producer.dao.EvaluatePictureDao;
 import cwh.order.producer.dao.FoodOrderDao;
 import cwh.order.producer.dao.FoodSaleDao;
+import cwh.order.producer.dao.OrderEvaluateDao;
 import cwh.order.producer.model.FoodOrder;
+import cwh.order.producer.model.OrderEvaluate;
 import cwh.order.producer.service.OrderService;
 import cwh.order.producer.util.HandleException;
 import cwh.order.producer.util.PageQuery;
@@ -21,6 +24,10 @@ public class OrderServiceImpl implements OrderService {
     private FoodOrderDao foodOrderDao;
     @Resource
     private FoodSaleDao foodSaleDao;
+    @Resource
+    private OrderEvaluateDao orderEvaluateDao;
+    @Resource
+    private EvaluatePictureDao evaluatePictureDao;
 
     @Override
     public List<FoodOrder> getByStatus(String openid, int status, int page, int count) throws HandleException {
@@ -46,5 +53,16 @@ public class OrderServiceImpl implements OrderService {
         }
         foodOrder1.setFoodSales(foodSaleDao.queryByOrder(order_id));
         return foodOrder1;
+    }
+
+    @Override
+    public OrderEvaluate getEvaluate(String openid, long id) throws HandleException {
+        OrderEvaluate orderEvaluate = orderEvaluateDao.query(id);
+        if(orderEvaluate == null){
+            throw new HandleException("无法获取此订单评价信息");
+        }
+        orderEvaluate.setPictures(evaluatePictureDao.query(id));
+        orderEvaluate.setFoodSales(foodSaleDao.queryEvaluate(id));
+        return orderEvaluate;
     }
 }
