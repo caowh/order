@@ -57,7 +57,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderEvaluate getEvaluate(String openid, long id) throws HandleException {
-        OrderEvaluate orderEvaluate = orderEvaluateDao.query(id);
+        FoodOrder foodOrder=new FoodOrder();
+        foodOrder.setId(id);
+        foodOrder.setOpenid(openid);
+        OrderEvaluate orderEvaluate = orderEvaluateDao.query(foodOrder);
         if(orderEvaluate == null){
             throw new HandleException("无法获取此订单评价信息");
         }

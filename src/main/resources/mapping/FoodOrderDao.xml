@@ -4,7 +4,7 @@
 
     <select id="query" parameterType="cwh.order.producer.util.PageQuery"
             resultType="cwh.order.producer.model.FoodOrder">
-        SELECT id,create_time,total_price,sort,table_id,t_name,reason,
+        SELECT id,create_time,total_price,sort,table_id,t_name,reason
         FROM FOOD_ORDER WHERE store_id = #{string_param} AND status = #{int_param}
         ORDER BY create_time DESC limit #{start},#{count};
     </select>

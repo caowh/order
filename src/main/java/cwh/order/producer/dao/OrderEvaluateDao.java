@@ -1,5 +1,6 @@
 package cwh.order.producer.dao;
 
+import cwh.order.producer.model.FoodOrder;
 import cwh.order.producer.model.OrderEvaluate;
 import org.springframework.stereotype.Repository;
 
@@ -9,5 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderEvaluateDao {
 
-    OrderEvaluate query(long id);
+    OrderEvaluate query(FoodOrder foodOrder);
 }

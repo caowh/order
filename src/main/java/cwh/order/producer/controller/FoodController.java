@@ -154,7 +154,7 @@ public class FoodController {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
         int status = Integer.parseInt(getSafeParameter(request, "status"));
-        String ids = getSafeParameter(request, "ids");
+        String ids = request.getParameter("ids").replaceAll("'","‘");
         String name = getSafeParameter(request, "name");
         int page = Integer.parseInt(getSafeParameter(request, "page"));
         int count = Integer.parseInt(getSafeParameter(request, "count"));
@@ -173,7 +173,7 @@ public class FoodController {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
         int status = Integer.parseInt(getSafeParameter(request, "status"));
-        String ids = getSafeParameter(request, "ids");
+        String ids = request.getParameter("ids").replaceAll("'","‘");
         try {
             foodService.foodStatusChange(openid, ids, status);
             map.put("status", Constant.CODE_OK);
@@ -188,7 +188,7 @@ public class FoodController {
     public Map<String, Object> delete(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
         String openid = request.getAttribute("openid").toString();
-        String ids = getSafeParameter(request, "ids");
+        String ids = request.getParameter("ids").replaceAll("'","‘");
         try {
             foodService.delete(openid, ids);
             map.put("status", Constant.CODE_OK);

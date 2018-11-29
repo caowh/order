@@ -30,5 +30,6 @@ public class FoodOrder {
     private String headPictureUrl;
 
     private List<FoodSale> foodSales;
+    private int evaluate;
 
 }
